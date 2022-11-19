@@ -4,7 +4,9 @@
 	"scripts": {
 		"start": "node ./built",
 		"build": "tsc",
-		"test": "jest"
+		"test": "jest",
+		"update": "git pull && npm install && npm run build",
+		"force": "git fetch --all && git reset --hard origin/master && npm run update"
 	},
 	"dependencies": {
 		"@types/chalk": "2.2.0",
