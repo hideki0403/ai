@@ -1,0 +1,14 @@
+# これはあいらに関する設定ファイルです
+# このファイルを config.yaml としてコピーしてから設定を変更・保存してください。
+
+host: https://example.com # https:// + あなたのインスタンスのURL (末尾の / は除く)
+token: XXXXXXXXXXXXXXXXXX # 藍として動かしたいアカウントのアクセストークン
+master: example # 管理者のユーザー名(オプション)
+notingEnabled": true # ランダムにノートを投稿する機能を無効にする場合は false を入れる
+keywordEnabled": true  # キーワードを覚える機能 (MeCab が必要) を有効にする場合は true を入れる (無効にする場合は false)
+chartEnabled": true # チャート機能を無効化する場合は false を入れてください
+reversiEnabled": true # 藍とリバーシで対局できる機能を有効にする場合は true を入れる (無効にする場合は false)
+serverMonitoring": true # サーバー監視の機能を有効にする場合は true を入れる (無効にする場合は false)
+mecab": /usr/local/bin/mecab # MeCab のインストールパス (ソースからインストールした場合、大体は /usr/local/bin/mecab)
+mecabDic": null # MeCab の辞書ファイルパス (オプション)
+memoryDir": ./ # memory.jsonの保存先（オプション、デフォルトは'./'（レポジトリのルートです））
