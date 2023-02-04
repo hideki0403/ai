@@ -1,31 +1,32 @@
-import autobind from 'autobind-decorator';
-import Message from '@/message';
-import Module from '@/module';
-import serifs from '@/serifs';
-import { genItem } from '@/vocabulary';
-import config from '@/config';
-import { Note } from '@/misskey/note';
+import autobind from 'autobind-decorator'
+
+import Message from '@/message'
+import Module from '@/module'
+import serifs from '@/serifs'
+import { genItem } from '@/vocabulary'
+import config from '@/config'
+
 
 export default class extends Module {
-	public readonly name = 'poll';
+	public readonly name = 'poll'
 
 	@autobind
 	public install() {
 		setInterval(() => {
 			if (Math.random() < 0.1) {
-				this.post();
+				this.post()
 			}
-		}, 1000 * 60 * 60);
+		}, 1000 * 60 * 60)
 
 		return {
 			mentionHook: this.mentionHook,
 			timeoutCallback: this.timeoutCallback,
-		};
+		}
 	}
 
 	@autobind
 	private async post() {
-		const duration = 1000 * 60 * 15;
+		const duration = 1000 * 60 * 15
 
 		const polls = [ // TODO: Extract serif
 			['珍しそうなもの', 'みなさんは、どれがいちばん珍しいと思いますか？'],
@@ -62,85 +63,87 @@ export default class extends Module {
 			['Misskey本部にありそうなもの', 'みなさんは、Misskey本部にありそうなものはどれだと思いますか？'],
 			['燃えるゴミ', 'みなさんは、どれが燃えるゴミだと思いますか？'],
 			['好きなおにぎりの具', 'みなさんの好きなおにぎりの具はなんですか？'],
-		];
+		]
 
-		const poll = polls[Math.floor(Math.random() * polls.length)];
+		const poll = polls[Math.floor(Math.random() * polls.length)]
 
 		const choices = [
 			genItem(),
 			genItem(),
 			genItem(),
 			genItem(),
-		];
+		]
 
-		const note = await this.ai.post({
+		const note = await this.aira.post({
 			text: poll[1],
 			poll: {
 				choices,
 				expiredAfter: duration,
 				multiple: false,
 			}
-		});
+		})
 
 		// タイマーセット
 		this.setTimeoutWithPersistence(duration + 3000, {
 			title: poll[0],
 			noteId: note.id,
-		});
+		})
 	}
 
 	@autobind
 	private async mentionHook(msg: Message) {
 		if (!msg.or(['/poll']) || msg.user.username !== config.master) {
-			return false;
+			return false
 		} else {
-			this.log('Manualy poll requested');
+			this.log('Manualy poll requested')
 		}
 
-		this.post();
+		this.post()
 
-		return true;
+		return true
 	}
 
 	@autobind
-	private async timeoutCallback({ title, noteId }) {
-		const note: Note = await this.ai.api('notes/show', { noteId });
+	private async timeoutCallback({ title = '', noteId = '' }) {
+		const note = await this.aira.api('notes/show', { noteId })
 
-		const choices = note.poll!.choices;
+		const choices = note.poll!.choices
 
-		let mostVotedChoice;
+		let mostVotedChoice: typeof choices[0] | null = null
 
 		for (const choice of choices) {
 			if (mostVotedChoice == null) {
-				mostVotedChoice = choice;
-				continue;
+				mostVotedChoice = choice
+				continue
 			}
 
 			if (choice.votes > mostVotedChoice.votes) {
-				mostVotedChoice = choice;
+				mostVotedChoice = choice
 			}
 		}
 
-		const mostVotedChoices = choices.filter(choice => choice.votes === mostVotedChoice.votes);
+		if (!mostVotedChoice) return
+
+		const mostVotedChoices = choices.filter(choice => choice.votes === mostVotedChoice!.votes)
 
 		if (mostVotedChoice.votes === 0) {
-			this.ai.post({ // TODO: Extract serif
+			this.aira.post({ // TODO: Extract serif
 				text: '投票はありませんでした',
 				renoteId: noteId,
-			});
+			})
 		} else if (mostVotedChoices.length === 1) {
-			this.ai.post({ // TODO: Extract serif
+			this.aira.post({ // TODO: Extract serif
 				cw: `${title}アンケートの結果発表です！`,
 				text: `結果は${mostVotedChoice.votes}票の「${mostVotedChoice.text}」でした！`,
 				renoteId: noteId,
-			});
+			})
 		} else {
-			const choices = mostVotedChoices.map(choice => `「${choice.text}」`).join('と');
-			this.ai.post({ // TODO: Extract serif
+			const choices = mostVotedChoices.map(choice => `「${choice.text}」`).join('と')
+			this.aira.post({ // TODO: Extract serif
 				cw: `${title}アンケートの結果発表です！`,
 				text: `結果は${mostVotedChoice.votes}票の${choices}でした！`,
 				renoteId: noteId,
-			});
+			})
 		}
 	}
 }
