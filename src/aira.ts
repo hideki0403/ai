@@ -16,8 +16,8 @@ import Module from '@/module'
 import Message from '@/message'
 import Friend, { FriendDoc } from '@/friend'
 import log from '@/utils/log'
+import delay from '@/utils/delay'
 
-const delay = (msec: number) => new Promise(resolve => setTimeout(resolve, msec))
 const colorize = createColorize(pico)
 
 type MentionHook = (msg: Message) => Promise<boolean | HandlerResult>
