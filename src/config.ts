@@ -1,7 +1,20 @@
+import * as fs from 'fs'
+import * as yaml from 'js-yaml'
+import rootPath from 'app-root-path'
+
+const config = yaml.load(fs.readFileSync(rootPath.resolve('config.yml'), 'utf8'), { schema: yaml.FAILSAFE_SCHEMA }) as Config
+const packageJson = require(rootPath.resolve('package.json')) as { version: string }
+
+config.version = packageJson.version
+config.wsUrl = config.host.replace('http', 'ws')
+config.apiUrl = config.host + '/api'
+
+export default config as Config
+
 type Config = {
 	version: string,
 	host: string,
-	i: string,
+	token: string,
 	master?: string,
 	wsUrl: string,
 	apiUrl: string,
@@ -14,12 +27,3 @@ type Config = {
 	mecabDic?: string,
 	memoryDir?: string
 }
-
-const config = require('../config.json')
-const packageJson = require('../package.json')
-
-config.version = packageJson.version
-config.wsUrl = config.host.replace('http', 'ws')
-config.apiUrl = config.host + '/api'
-
-export default config as Config
