@@ -364,7 +364,7 @@ export default {
 	 * バレンタイン
 	 */
 	valentine: {
-		chocolateForYou: (name?: mixedString) => name ? `${name}、その... チョコレート作ったのでよかったらどうぞ！🍫` : 'チョコレート作ったのでよかったらどうぞ！🍫',
+		chocolateForYou: (name: nullableString) => name ? `${name}、その... チョコレート作ったのでよかったらどうぞ！🍫` : 'チョコレート作ったのでよかったらどうぞ！🍫',
 	},
 
 	server: {

@@ -148,7 +148,7 @@ export default class extends Module {
 		let reply: Misskey.entities.Note | undefined = undefined
 		if (remind.isDm) {
 			this.aira.sendMessage(friend.userId, {
-				text: serifs.reminder.notifyWithThing(remind.thing, friend.name)
+				text: serifs.reminder.notifyWithThing(remind.thing as string, friend.name)
 			})
 		} else {
 			try {
