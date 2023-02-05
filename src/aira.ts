@@ -2,7 +2,7 @@
 
 import * as fs from 'fs'
 import autobind from 'autobind-decorator'
-import * as loki from 'lokijs'
+import Loki from 'lokijs'
 import pico from 'picocolors'
 import { createColorize } from 'colorize-template'
 import { v4 as uuid } from 'uuid'
@@ -51,11 +51,11 @@ export default class Aira {
 	private mentionHooks: MentionHook[] = []
 	private contextHooks: { [moduleName: string]: ContextHook } = {}
 	private timeoutCallbacks: { [moduleName: string]: TimeoutCallback } = {}
-	public db!: loki
+	public db!: Loki
 	public lastSleepedAt!: number
-	private meta!: loki.Collection<Meta>
+	private meta!: Loki.Collection<Meta>
 
-	private contexts!: loki.Collection<{
+	private contexts!: Loki.Collection<{
 		isDm: boolean
 		noteId?: string
 		userId?: string
@@ -64,7 +64,7 @@ export default class Aira {
 		data?: any
 	}>
 
-	private timers!: loki.Collection<{
+	private timers!: Loki.Collection<{
 		id: string
 		module: string
 		insertedAt: number
@@ -72,16 +72,11 @@ export default class Aira {
 		data?: any
 	}>
 
-	public friends!: loki.Collection<FriendDoc>
-	public moduleData!: loki.Collection<any>
+	public friends!: Loki.Collection<FriendDoc>
+	public moduleData!: Loki.Collection<any>
 
-	public api = new Misskey.api.APIClient({
-		origin: config.host,
-		credential: config.token,
-		fetch
-	}).request
-
-	public stream = new Misskey.Stream(config.host, { token: config.token }, { WebSocket: ws })
+	public api: Misskey.api.APIClient['request']
+	public stream: Misskey.Stream
 
 	/**
 	 * あいらインスタンスを生成します
@@ -89,14 +84,29 @@ export default class Aira {
 	 */
 	constructor(modules: Module[]) {
 		this.modules = modules
+		
+		const api = new Misskey.api.APIClient({
+			origin: config.host,
+			credential: config.token,
+			fetch
+		})
+
+		// this.api = api.request にするとrequest内のthisがAPIClientではなくAiraを指してしまうのでこのような形にする
+		this.api = (...args) => api.request(...args)
+		this.stream = new Misskey.Stream(config.host, { token: config.token }, { WebSocket: ws })
+
 		this.initialize()
 	}
 
 	@autobind
 	private async initialize() {
+		console.log(this.api)
 		const account = await promiseRetry(retry => {
 			log(`Account fetching... ${pico.gray(config.host)}`)
-			return this.api('i').catch(retry)
+			return this.api('i').catch(err => {
+				console.log(err)
+				retry(err)
+			})
 		}, {
 			retries: 3
 		}).catch(() => {
@@ -343,8 +353,8 @@ export default class Aira {
 	 * データベースのコレクションを取得します
 	 */
 	@autobind
-	public getCollection(name: string, opts?: any): loki.Collection {
-		let collection: loki.Collection
+	public getCollection(name: string, opts?: any): Loki.Collection {
+		let collection: Loki.Collection
 
 		collection = this.db.getCollection(name)
 
@@ -374,7 +384,7 @@ export default class Aira {
 		formData.append('i', config.token)
 		formData.append('file', file, meta)
 
-		const res = await fetch(`${config.apiUrl}/drive/files/create`, {
+		const res = await fetch(`${config.host}/api/drive/files/create`, {
 			method: 'POST',
 			body: formData
 		})
