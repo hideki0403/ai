@@ -140,7 +140,7 @@ export default class extends Module {
 		if (msg.text == null) return
 
 		const done = () => {
-			msg.reply(serifs.core.setNameOk(msg.friend.name))
+			msg.reply(serifs.core.setNameOk(msg.friend.name as string))
 			this.unsubscribeReply(key)
 		}
 
