@@ -6,8 +6,6 @@ const config = yaml.load(fs.readFileSync(rootPath.resolve('config.yaml'), 'utf8'
 const packageJson = require(rootPath.resolve('package.json')) as { version: string }
 
 config.version = packageJson.version
-config.wsUrl = config.host.replace('http', 'ws')
-config.apiUrl = config.host + '/api'
 
 export default config as Config
 
@@ -16,8 +14,6 @@ type Config = {
 	host: string,
 	token: string,
 	master?: string,
-	wsUrl: string,
-	apiUrl: string,
 	keywordEnabled: boolean,
 	notingEnabled: boolean,
 	chartEnabled: boolean,
