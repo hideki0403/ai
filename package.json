@@ -28,7 +28,8 @@
 		"sane": "5.0.1",
 		"seedrandom": "3.0.5",
 		"twemoji-parser": "14.0.0",
-		"uuid": "9.0.0"
+		"uuid": "9.0.0",
+		"ws": "8.12.0"
 	},
 	"devDependencies": {
 		"@types/chroma-js": "2.1.4",
@@ -41,6 +42,7 @@
 		"@types/seedrandom": "3.0.4",
 		"@types/twemoji-parser": "13.1.1",
 		"@types/uuid": "9.0.0",
+		"@types/ws": "8.5.4",
 		"ts-node": "10.9.1",
 		"ts-node-dev": "^2.0.0",
 		"tsc-alias": "^1.8.2",

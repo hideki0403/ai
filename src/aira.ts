@@ -7,6 +7,7 @@ import pico from 'picocolors'
 import { createColorize } from 'colorize-template'
 import { v4 as uuid } from 'uuid'
 import * as Misskey from 'misskey-js'
+import ws from 'ws'
 import fetch from 'node-fetch'
 import FormData from 'form-data'
 import promiseRetry from 'promise-retry'
@@ -80,9 +81,7 @@ export default class Aira {
 		fetch
 	}).request
 
-	public stream = new Misskey.Stream(config.host, {
-		token: config.token
-	})
+	public stream = new Misskey.Stream(config.host, { token: config.token }, { WebSocket: ws })
 
 	/**
 	 * あいらインスタンスを生成します
@@ -105,7 +104,7 @@ export default class Aira {
 		})
 
 		// アカウントの取得に失敗したら終了
-		if (!account) return
+		if (!account) return process.exit(1)
 
 		this.account = account
 		log(pico.green(`Account fetched successfully: ${pico.underline(`@${account.username}`)}`))
