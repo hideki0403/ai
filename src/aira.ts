@@ -379,7 +379,7 @@ export default class Aira {
 			method: 'POST',
 			body: formData
 		})
-		return res
+		return await res.json() as Misskey.entities.DriveFile
 	}
 
 	/**
