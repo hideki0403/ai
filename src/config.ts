@@ -2,7 +2,7 @@ import * as fs from 'fs'
 import * as yaml from 'js-yaml'
 import rootPath from 'app-root-path'
 
-const config = yaml.load(fs.readFileSync(rootPath.resolve('config.yml'), 'utf8'), { schema: yaml.FAILSAFE_SCHEMA }) as Config
+const config = yaml.load(fs.readFileSync(rootPath.resolve('config.yaml'), 'utf8'), { schema: yaml.FAILSAFE_SCHEMA }) as Config
 const packageJson = require(rootPath.resolve('package.json')) as { version: string }
 
 config.version = packageJson.version
@@ -19,7 +19,6 @@ type Config = {
 	wsUrl: string,
 	apiUrl: string,
 	keywordEnabled: boolean,
-	reversiEnabled: boolean,
 	notingEnabled: boolean,
 	chartEnabled: boolean,
 	serverMonitoring: boolean,
