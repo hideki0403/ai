@@ -9,6 +9,7 @@ import CoreModule from './modules/core'
 import TalkModule from './modules/talk'
 import BirthdayModule from './modules/birthday'
 import PingModule from './modules/ping'
+import EmojiMakerModule from './modules/emoji-maker'
 import EmojiModule from './modules/emoji'
 import EmojiReactModule from './modules/emoji-react'
 import FortuneModule from './modules/fortune'
@@ -17,6 +18,7 @@ import KazutoriModule from './modules/kazutori'
 import KeywordModule from './modules/keyword'
 import WelcomeModule from './modules/welcome'
 import TimerModule from './modules/timer'
+import TimeSignalModule from './modules/time-signal'
 import DiceModule from './modules/dice'
 import ServerModule from './modules/server'
 import FollowModule from './modules/follow'
@@ -28,12 +30,12 @@ import NotingModule from './modules/noting'
 import PollModule from './modules/poll'
 import ReminderModule from './modules/reminder'
 
-console.log(`
+console.log(pico.green(`
  _____ _            _____ _____ 
 |  _  |_|___ ___   |     |   __|
 |     | |  _| .'|  |  |  |__   |
 |__|__|_|_| |__,|  |_____|_____|
-`)
+`))
 
 function log(msg: string): void {
 	_log(`[Boot]: ${msg}`)
@@ -45,12 +47,14 @@ log('Starting AiraOS...')
 // あいらを起動
 new Aira([
 	new CoreModule(),
+	new EmojiMakerModule(),
 	new EmojiModule(),
 	new EmojiReactModule(),
 	new FortuneModule(),
 	new GuessingGameModule(),
 	new KazutoriModule(),
 	new TimerModule(),
+	new TimeSignalModule(),
 	new DiceModule(),
 	new TalkModule(),
 	new PingModule(),
@@ -64,6 +68,6 @@ new Aira([
 	new ChartModule(),
 	new SleepReportModule(),
 	new NotingModule(),
-	// new PollModule(),
+	new PollModule(),
 	new ReminderModule(),
 ])

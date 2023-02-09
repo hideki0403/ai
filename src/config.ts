@@ -18,6 +18,7 @@ type Config = {
 	notingEnabled: boolean,
 	chartEnabled: boolean,
 	mazeEnabled: boolean,
+	timeSignalEnabled: boolean,
 	serverMonitoring: boolean,
 	mecab?: string,
 	mecabDic?: string,
