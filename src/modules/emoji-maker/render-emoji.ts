@@ -14,7 +14,7 @@ type renderEmojiOptions = {
 }
 
 export function renderEmoji(text: string, options: renderEmojiOptions = {}) {
-	const useFont = options.font ? (fonts.availableFonts.find(name => name.includes(options.font as string)) ?? 'notosans.otf') : 'notosans.otf'
+	const fontFile = fonts.findFont(options.font ?? 'notosans')
 	const resolution = options.resolution && isNaN(Number(options.resolution)) ? Math.min(512, Number(options.resolution)) : 256
 	const color = ((options.color ? chroma(options.color).hex() : chroma.hsv(360 * Math.random(), 0.5, 0.7).hex()) + 'FF').substring(0, 9)
 	const textAlign = options.align && ['left', 'center', 'right'].includes(options.align) ? options.align as libemoji.EmojiOptions['textAlign'] : 'center'
@@ -24,7 +24,7 @@ export function renderEmoji(text: string, options: renderEmojiOptions = {}) {
 		height: resolution,
 		color: color,
 		disableStretch: options.stretch ? parseBoolean(options.stretch) : false,
-		typefaceFile: rootPath.resolve(`./fonts/${useFont}`),
+		typefaceFile: fontFile,
 		textSizeFixed: options.fixedText ? parseBoolean(options.fixedText) : false,
 		textAlign: textAlign
 	})

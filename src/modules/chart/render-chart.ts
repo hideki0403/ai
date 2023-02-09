@@ -1,3 +1,4 @@
+import fonts from '@/utils/fonts'
 import { createCanvas, registerFont } from 'canvas'
 
 const width = 1024 + 256
@@ -32,7 +33,7 @@ type Chart = {
 }
 
 export function renderChart(chart: Chart) {
-	registerFont('./fonts/default.ttf', { family: 'CustomFont' })
+	registerFont(fonts.findFont(), { family: 'CustomFont' })
 
 	const canvas = createCanvas(width, height)
 	const ctx = canvas.getContext('2d')
