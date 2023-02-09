@@ -17,6 +17,7 @@ type Config = {
 	keywordEnabled: boolean,
 	notingEnabled: boolean,
 	chartEnabled: boolean,
+	mazeEnabled: boolean,
 	serverMonitoring: boolean,
 	mecab?: string,
 	mecabDic?: string,

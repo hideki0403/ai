@@ -4,12 +4,14 @@ import serifs from '@/serifs'
 import { genMaze } from './gen-maze'
 import { renderMaze } from './render-maze'
 import Message from '@/message'
+import config from '@/config'
 
 export default class extends Module {
 	public readonly name = 'maze'
 
 	@autobind
 	public install() {
+		if (config.mazeEnabled === false) return {}
 		// this.post()
 		// setInterval(this.post, 1000 * 60 * 3)
 
