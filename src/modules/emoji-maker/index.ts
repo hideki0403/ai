@@ -44,8 +44,6 @@ export default class extends Module {
 		const args = referNote.text!.replace(/ +/g, ' ').split(' ')
 		const options = {} as { [key: string]: string }
 
-		console.log(args)
-
 		for (let i = 0; i < args.length; i++) {
 			const arg = args[i]
 			if (!arg.startsWith('--')) continue
