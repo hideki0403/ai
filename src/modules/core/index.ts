@@ -3,6 +3,7 @@ import Module from '@/module'
 import Message from '@/message'
 import serifs from '@/serifs'
 import { safeForInterpolate } from '@/utils/safe-for-interpolate'
+import fonts from '@/utils/fonts'
 
 const titles = ['さん', 'くん', '君', 'ちゃん', '様', '先生']
 
@@ -26,6 +27,7 @@ export default class extends Module {
 			this.transferEnd(msg) ||
 			this.setName(msg) ||
 			this.modules(msg) ||
+			this.fonts(msg) ||
 			this.version(msg)
 		)
 	}
@@ -112,6 +114,26 @@ export default class extends Module {
 
 		for (const m of this.aira.modules) {
 			text += `${m.name}\n`
+		}
+
+		text += '```'
+
+		msg.reply(text, {
+			immediate: true
+		})
+
+		return true
+	}
+
+	@autobind
+	private fonts(msg: Message): boolean {
+		if (!msg.text) return false
+		if (!msg.or(['font'])) return false
+
+		let text = '```\n'
+
+		for (const name of fonts.availableFontsName) {
+			text += `${name}\n`
 		}
 
 		text += '```'

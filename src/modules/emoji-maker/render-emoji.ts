@@ -1,11 +1,8 @@
 import * as libemoji from '@hideki0403/libemoji.js'
-import fs from 'fs'
 import chroma from 'chroma-js'
-import parseBoolean from '@/utils/parse-boolean'
 import rootPath from 'app-root-path'
-
-const fontExtensinon = /\.(ttf|otf)$/
-const availableFonts = fs.readdirSync('./fonts').filter(name => name.match(fontExtensinon))
+import parseBoolean from '@/utils/parse-boolean'
+import fonts from '@/utils/fonts'
 
 type renderEmojiOptions = {
 	font?: string,
@@ -17,7 +14,7 @@ type renderEmojiOptions = {
 }
 
 export function renderEmoji(text: string, options: renderEmojiOptions = {}) {
-	const useFont = options.font ? (availableFonts.find(name => name.includes(options.font as string)) ?? 'notosans.otf') : 'notosans.otf'
+	const useFont = options.font ? (fonts.availableFonts.find(name => name.includes(options.font as string)) ?? 'notosans.otf') : 'notosans.otf'
 	const resolution = options.resolution && isNaN(Number(options.resolution)) ? Math.min(512, Number(options.resolution)) : 256
 	const color = ((options.color ? chroma(options.color).hex() : chroma.hsv(360 * Math.random(), 0.5, 0.7).hex()) + 'FF').substring(0, 9)
 	const textAlign = options.align && ['left', 'center', 'right'].includes(options.align) ? options.align as libemoji.EmojiOptions['textAlign'] : 'center'
