@@ -100,13 +100,9 @@ export default class Aira {
 
 	@autobind
 	private async initialize() {
-		console.log(this.api)
 		const account = await promiseRetry(retry => {
 			log(`Account fetching... ${pico.gray(config.host)}`)
-			return this.api('i').catch(err => {
-				console.log(err)
-				retry(err)
-			})
+			return this.api('i').catch(retry)
 		}, {
 			retries: 3
 		}).catch(() => {
