@@ -35,7 +35,7 @@ export default class extends Module {
 
 	@autobind
 	private async learn() {
-		const tl = await this.aira.api('notes/local-timeline', {
+		const tl = await this.aira.api('notes/timeline', {
 			limit: 30
 		})
 
