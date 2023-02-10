@@ -311,7 +311,7 @@ export default class Aira {
 	}
 
 	@autobind
-	private onNotification(notification: any) {
+	private onNotification(notification: Misskey.entities.Notification) {
 		switch (notification.type) {
 			// リアクションされたら親愛度を少し上げる
 			// TODO: リアクション取り消しをよしなにハンドリングする
@@ -320,8 +320,6 @@ export default class Aira {
 				friend.incLove(0.1)
 				break
 			}
-
-			default: break
 		}
 	}
 
