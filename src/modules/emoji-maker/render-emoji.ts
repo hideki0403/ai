@@ -1,6 +1,6 @@
 import * as libemoji from '@hideki0403/libemoji.js'
 import chroma from 'chroma-js'
-import rootPath from 'app-root-path'
+import random from 'random-seed'
 import parseBoolean from '@/utils/parse-boolean'
 import fonts from '@/utils/fonts'
 
@@ -13,10 +13,11 @@ type renderEmojiOptions = {
 	stretch?: string
 }
 
-export function renderEmoji(text: string, options: renderEmojiOptions = {}) {
+export function renderEmoji(text: string, colorSeed?: string, options: renderEmojiOptions = {}) {
+	const rnd = random.create(colorSeed ?? text).random()
 	const fontFile = fonts.findFont(options.font ?? 'notosans')
 	const resolution = options.resolution && isNaN(Number(options.resolution)) ? Math.min(512, Number(options.resolution)) : 256
-	const color = ((options.color ? chroma(options.color).hex() : chroma.hsv(360 * Math.random(), 0.5, 0.7).hex()) + 'FF').substring(0, 9)
+	const color = ((options.color ? chroma(options.color).hex() : chroma.hsv(360 * rnd, 0.5, 0.7).hex()) + 'FF').substring(0, 9)
 	const textAlign = options.align && ['left', 'center', 'right'].includes(options.align) ? options.align as libemoji.EmojiOptions['textAlign'] : 'center'
 
 	const result = libemoji.generate(text, {
