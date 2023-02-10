@@ -8,9 +8,9 @@ type renderEmojiOptions = {
 	font?: string,
 	resolution?: string,
 	color?: string,
-	'fixed-text'?: string,
 	align?: string,
-	stretch?: string
+	'fixed-text'?: string,
+	'no-stretch'?: string
 }
 
 export function renderEmoji(text: string, colorSeed?: string, options: renderEmojiOptions = {}) {
@@ -24,7 +24,7 @@ export function renderEmoji(text: string, colorSeed?: string, options: renderEmo
 		width: resolution,
 		height: resolution,
 		color: color,
-		disableStretch: options.stretch ? parseBoolean(options.stretch) : false,
+		disableStretch: options['no-stretch'] ? parseBoolean(options['no-stretch']) : false,
 		typefaceFile: fontFile,
 		textSizeFixed: options['fixed-text'] ? parseBoolean(options['fixed-text']) : false,
 		textAlign: textAlign
