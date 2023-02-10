@@ -254,8 +254,13 @@ export default {
 	emojiMaker: {
 		noDm: 'DMで絵文字を作ることは出来ないから、ノートから試してみてね！',
 		noteNotFound: '絵文字を作る対象のノートが見つからないや...',
-		tooLongText: '絵文字にする文字列が長すぎるかも...128文字以下で試してみてね！',
-		success: '絵文字が出来たよ！'
+		exists: (id: string) => `この絵文字は既にあるかも！ :${id}:`,
+		tooLongText: (limit: number) => `絵文字にする文字列が長すぎるかも...${limit}文字以下で試してみてね！`,
+		success: '絵文字が出来たよ！',
+		successWithEmoji: (id: string) => `絵文字を作って登録したよ！ :${id}:\n絵文字が使えるようになるまで時間が掛かることがあるから、その時はしばらく待ってみてね！`,
+		deleteSuccess: '指定された絵文字を削除したよ！',
+		deleteAllError: '指定された絵文字を削除しようとしたけどできなかったみたい...もう一度確認して試してみてね！',
+		deleteWithError: (ids: string[]) => `指定された絵文字を削除したけど、以下の絵文字が削除できなかったみたい...もう一度確認して試してみてね！\n${ids.map(id => `:${id}:`).join(' ')}`
 	},
 
 	/**
