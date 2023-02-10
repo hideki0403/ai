@@ -3,7 +3,7 @@ import * as loki from 'lokijs'
 import Module from '@/module'
 import config from '@/config'
 import serifs from '@/serifs'
-import { mecab } from './mecab'
+import { mecab } from '../../utils/mecab'
 
 function kanaToHira(str: string) {
 	return str.replace(/[\u30a1-\u30f6]/g, match => {
@@ -47,7 +47,7 @@ export default class extends Module {
 		let keywords: string[][] = []
 
 		for (const note of interestedNotes) {
-			const tokens = await mecab(note.text as string, config.mecab, config.mecabDic)
+			const tokens = await mecab(note.text as string)
 			const keywordsInThisNote = tokens.filter(token => token[2] == '固有名詞' && token[8] != null)
 			keywords = keywords.concat(keywordsInThisNote)
 		}
