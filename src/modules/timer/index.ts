@@ -47,7 +47,6 @@ export default class extends Module {
 
 		// タイマーセット
 		this.setTimeoutWithPersistence(time, {
-			isDm: msg.isDm,
 			msgId: msg.id,
 			userId: msg.friend.userId,
 			time: str
@@ -58,18 +57,12 @@ export default class extends Module {
 
 	@autobind
 	private timeoutCallback(data: any) {
-		const friend = this.aira.lookupFriend(data.userId)
-		if (friend == null) return // 処理の流れ上、実際にnullになることは無さそうだけど一応
-		const text = serifs.timer.notify(data.time, friend.name)
-		if (data.isDm) {
-			this.aira.sendMessage(friend.userId, {
-				text: text
-			})
-		} else {
-			this.aira.post({
-				replyId: data.msgId,
-				text: text
-			})
-		}
+		const friend = this.aira.lookupFriend(data.userId);
+		if (friend == null) return; // 処理の流れ上、実際にnullになることは無さそうだけど一応
+		const text = serifs.timer.notify(data.time, friend.name);
+		this.aira.post({
+			replyId: data.msgId,
+			text: text
+		});
 	}
 }

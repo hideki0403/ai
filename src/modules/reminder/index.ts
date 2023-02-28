@@ -13,14 +13,13 @@ export default class extends Module {
 	public readonly name = 'reminder'
 
 	private reminds!: loki.Collection<{
-		userId: string
-		id: string
-		isDm: boolean
-		thing: string | null
-		quoteId: string | null
-		times: number // 催促した回数(使うのか？)
-		createdAt: number
-	}>
+		userId: string;
+		id: string;
+		thing: string | null;
+		quoteId: string | null;
+		times: number; // 催促した回数(使うのか？)
+		createdAt: number;
+	}>;
 
 	@autobind
 	public install() {
@@ -71,7 +70,6 @@ export default class extends Module {
 		const remind = this.reminds.insertOne({
 			id: msg.id,
 			userId: msg.userId,
-			isDm: msg.isDm,
 			thing: thing === '' ? null : thing,
 			quoteId: msg.quoteId,
 			times: 0,
@@ -79,13 +77,13 @@ export default class extends Module {
 		})
 
 		// メンションをsubscribe
-		this.subscribeReply(remind!.id, msg.isDm, msg.isDm ? msg.userId : msg.id, {
+		this.subscribeReply(remind!.id, msg.id, {
 			id: remind!.id
 		})
 
 		if (msg.quoteId) {
 			// 引用元をsubscribe
-			this.subscribeReply(remind!.id, false, msg.quoteId, {
+			this.subscribeReply(remind!.id, msg.quoteId, {
 				id: remind!.id
 			})
 		}
@@ -127,8 +125,7 @@ export default class extends Module {
 			msg.reply(serifs.reminder.doneFromInvalidUser)
 			return
 		} else {
-			if (msg.isDm) this.unsubscribeReply(key)
-			return false
+			return false;
 		}
 	}
 
@@ -145,29 +142,23 @@ export default class extends Module {
 		const friend = this.aira.lookupFriend(remind.userId)
 		if (friend == null) return // 処理の流れ上、実際にnullになることは無さそうだけど一応
 
-		let reply: Misskey.entities.Note | undefined = undefined
-		if (remind.isDm) {
-			this.aira.sendMessage(friend.userId, {
-				text: serifs.reminder.notifyWithThing(remind.thing as string, friend.name)
-			})
-		} else {
-			try {
-				reply = await this.aira.post({
-					renoteId: remind.thing == null && remind.quoteId ? remind.quoteId : remind.id,
-					text: acct(friend.doc.user) + ' ' + serifs.reminder.notify(friend.name)
-				})
-			} catch (err: any) {
-				// renote対象が消されていたらリマインダー解除
-				if (err.statusCode === 400) {
-					this.unsubscribeReply(remind.thing == null && remind.quoteId ? remind.quoteId : remind.id)
-					this.reminds.remove(remind)
-					return
-				}
-				return
+		let reply;
+		try {
+			reply = await this.aira.post({
+				renoteId: remind.thing == null && remind.quoteId ? remind.quoteId : remind.id,
+				text: acct(friend.doc.user) + ' ' + serifs.reminder.notify(friend.name)
+			});
+		} catch (err: any) {
+			// renote対象が消されていたらリマインダー解除
+			if (err.statusCode === 400) {
+				this.unsubscribeReply(remind.thing == null && remind.quoteId ? remind.quoteId : remind.id);
+				this.reminds.remove(remind);
+				return;
 			}
+			return;
 		}
 
-		this.subscribeReply(remind.id, remind.isDm, remind.isDm ? remind.userId : reply!.id, {
+		this.subscribeReply(remind.id, reply.id, {
 			id: remind.id
 		})
 
