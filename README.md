@@ -1,65 +1,35 @@
-<h1><p align="center"><img src="./ai.svg" alt="藍" height="200"></p></h1>
-<p align="center">An Ai for Misskey. <a href="./torisetu.md">About Ai</a></p>
+<h1><p align="center"><img src="assets/ai.svg" alt="藍" height="200"></p></h1>
+<p align="center">An Ai for Misskey. <a href="./torisetu.md">About Aira</a></p>
 
 ## これなに
 Misskey用の日本語Botです。
 
-## 本家との相違点
-- アンケート機能を無効化
-- 決まった時間に投稿される迷路を無効化
+## 本家(藍)との相違点
+- 本家と口調が異なる
+- 絵文字生成ができる
+- 日付が変わったときにお知らせ
+- 単語をLTLではなくTL(フォロイー)から覚えるように
+- リバーシのサポートを終了
+
+## 実装予定
+- 毎朝天気予報をお知らせしてくれる機能
 
 ## インストール
 > Node.js と npm と MeCab (オプション) がインストールされている必要があります。
 
-まず適当なディレクトリに `git clone` します。
-次にそのディレクトリに `config.json` を作成します。中身は次のようにします:
-``` json
-{
-	"host": "https:// + あなたのインスタンスのURL (末尾の / は除く)",
-	"i": "藍として動かしたいアカウントのアクセストークン",
-	"master": "管理者のユーザー名(オプション)",
-	"notingEnabled": "ランダムにノートを投稿する機能を無効にする場合は false を入れる",
-	"keywordEnabled": "キーワードを覚える機能 (MeCab が必要) を有効にする場合は true を入れる (無効にする場合は false)",
-	"chartEnabled": "チャート機能を無効化する場合は false を入れてください",
-	"reversiEnabled": "藍とリバーシで対局できる機能を有効にする場合は true を入れる (無効にする場合は false)",
-	"serverMonitoring": "サーバー監視の機能を有効にする場合は true を入れる (無効にする場合は false)",
-	"mecab": "MeCab のインストールパス (ソースからインストールした場合、大体は /usr/local/bin/mecab)",
-	"mecabDic": "MeCab の辞書ファイルパス (オプション)",
-	"memoryDir": "memory.jsonの保存先（オプション、デフォルトは'.'（レポジトリのルートです））"
-}
-```
-`npm install` して `npm run build` して `npm start` すれば起動できます
-
-## Dockerで動かす
-まず適当なディレクトリに `git clone` します。
-次にそのディレクトリに `config.json` を作成します。中身は次のようにします:
-（MeCabの設定、memoryDirについては触らないでください）
-``` json
-{
-	"host": "https:// + あなたのインスタンスのURL (末尾の / は除く)",
-	"i": "藍として動かしたいアカウントのアクセストークン",
-	"master": "管理者のユーザー名(オプション)",
-	"notingEnabled": "ランダムにノートを投稿する機能を無効にする場合は false を入れる",
-	"keywordEnabled": "キーワードを覚える機能 (MeCab が必要) を有効にする場合は true を入れる (無効にする場合は false)",
-	"chartEnabled": "チャート機能を無効化する場合は false を入れてください",
-	"reversiEnabled": "藍とリバーシで対局できる機能を有効にする場合は true を入れる (無効にする場合は false)",
-	"serverMonitoring": "サーバー監視の機能を有効にする場合は true を入れる (無効にする場合は false)",
-	"mecab": "/usr/bin/mecab",
-	"mecabDic": "/usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd/",
-	"memoryDir": "data"
-}
-```
-`docker-compose build` して `docker-compose up` すれば起動できます。
-`docker-compose.yml` の `enable_mecab` を `0` にすると、MeCabをインストールしないようにもできます。（メモリが少ない環境など）
+1. まず適当なディレクトリに `git clone` します。
+2. ディレクトリのルートにある `example.config.yaml` を `config.yaml` としてコピーしてから設定を変更・保存してください。
+3. `pnpm install` して `pnpm build` して `pnpm start` すれば起動できます。
 
 ## フォント
-一部の機能にはフォントが必要です。藍にはフォントは同梱されていないので、ご自身でフォントをインストールディレクトリに`font.ttf`という名前で設置してください。
+一部の機能にはフォントが必要です。あいらにはフォントは同梱されていないので、ご自身でフォントを `fonts` ディレクトリに `default.ttf` (または `default.otf` ) という名前で設置してください。  
+また、 `default.{ttf,otf}` に加えて `fonts` ディレクトリ内にTTFまたはOTF形式の任意のフォントを配置することで、絵文字の生成で利用できるフォントを追加することが出来ます。
 
 ## 記憶
-藍は記憶の保持にインメモリデータベースを使用しており、藍のインストールディレクトリに `memory.json` という名前で永続化されます。
+あいらは記憶の保持にインメモリデータベースを使用しており、あいらのインストールディレクトリに `memory.json` という名前で永続化されます。
 
 ## ライセンス
 MIT
 
 ## Awards
-<img src="./WorksOnMyMachine.png" alt="Works on my machine" height="120">
+<img src="assets/WorksOnMyMachine.png" alt="Works on my machine" height="120">

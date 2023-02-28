@@ -1,5 +1,6 @@
-config.json
+config.yaml
 built
 node_modules
 memory.json
-font.ttf
+*.ttf
+*.otf

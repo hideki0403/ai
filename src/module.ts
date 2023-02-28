@@ -1,44 +1,43 @@
-import autobind from 'autobind-decorator';
-import 藍, { InstallerResult } from '@/ai';
+import autobind from 'autobind-decorator'
+import Aira, { InstallerResult } from '@/aira'
 
 export default abstract class Module {
-	public abstract readonly name: string;
+	public abstract readonly name: string
 
-	protected ai: 藍;
-	private doc: any;
+	protected aira!: Aira
+	private doc: any
 
-	public init(ai: 藍) {
-		this.ai = ai;
+	public init(aira: Aira) {
+		this.aira = aira
 
-		this.doc = this.ai.moduleData.findOne({
+		this.doc = this.aira.moduleData.findOne({
 			module: this.name
-		});
+		})
 
 		if (this.doc == null) {
-			this.doc = this.ai.moduleData.insertOne({
+			this.doc = this.aira.moduleData.insertOne({
 				module: this.name,
 				data: {}
-			});
+			})
 		}
 	}
 
-	public abstract install(): InstallerResult;
+	public abstract install(): InstallerResult
 
 	@autobind
 	protected log(msg: string) {
-		this.ai.log(`[${this.name}]: ${msg}`);
+		this.aira.log(`[${this.name}]: ${msg}`)
 	}
 
 	/**
 	 * コンテキストを生成し、ユーザーからの返信を待ち受けます
 	 * @param key コンテキストを識別するためのキー
-	 * @param isDm トークメッセージ上のコンテキストかどうか
 	 * @param id トークメッセージ上のコンテキストならばトーク相手のID、そうでないなら待ち受ける投稿のID
 	 * @param data コンテキストに保存するオプションのデータ
 	 */
 	@autobind
-	protected subscribeReply(key: string | null, isDm: boolean, id: string, data?: any) {
-		this.ai.subscribeReply(this, key, isDm, id, data);
+	protected subscribeReply(key: string | null, id: string, data?: any) {
+		this.aira.subscribeReply(this, key, id, data);
 	}
 
 	/**
@@ -47,7 +46,7 @@ export default abstract class Module {
 	 */
 	@autobind
 	protected unsubscribeReply(key: string | null) {
-		this.ai.unsubscribeReply(this, key);
+		this.aira.unsubscribeReply(this, key)
 	}
 
 	/**
@@ -58,17 +57,17 @@ export default abstract class Module {
 	 */
 	@autobind
 	public setTimeoutWithPersistence(delay: number, data?: any) {
-		this.ai.setTimeoutWithPersistence(this, delay, data);
+		this.aira.setTimeoutWithPersistence(this, delay, data)
 	}
 
 	@autobind
 	protected getData() {
-		return this.doc.data;
+		return this.doc.data
 	}
 
 	@autobind
 	protected setData(data: any) {
-		this.doc.data = data;
-		this.ai.moduleData.update(this.doc);
+		this.doc.data = data
+		this.aira.moduleData.update(this.doc)
 	}
 }

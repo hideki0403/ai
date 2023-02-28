@@ -1,33 +1,33 @@
-import autobind from 'autobind-decorator';
-import Module from '@/module';
+import autobind from 'autobind-decorator'
+import Module from '@/module'
 
 export default class extends Module {
-	public readonly name = 'welcome';
+	public readonly name = 'welcome'
 
 	@autobind
 	public install() {
-		const tl = this.ai.connection.useSharedConnection('localTimeline');
+		const tl = this.aira.stream.useChannel('localTimeline')
 
-		tl.on('note', this.onLocalNote);
+		tl.on('note', this.onLocalNote)
 
-		return {};
+		return {}
 	}
 
 	@autobind
 	private onLocalNote(note: any) {
 		if (note.isFirstNote) {
 			setTimeout(() => {
-				this.ai.api('notes/create', {
+				this.aira.api('notes/create', {
 					renoteId: note.id
-				});
-			}, 3000);
+				})
+			}, 3000)
 
 			setTimeout(() => {
-				this.ai.api('notes/reactions/create', {
+				this.aira.api('notes/reactions/create', {
 					noteId: note.id,
 					reaction: 'congrats'
-				});
-			}, 5000);
+				})
+			}, 5000)
 		}
 	}
 }

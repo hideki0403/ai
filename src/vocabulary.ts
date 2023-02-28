@@ -1,5 +1,4 @@
-import * as seedrandom from 'seedrandom';
-
+import { xorshift7 as seedrandom } from 'seedrandom'
 export const itemPrefixes = [
 	'プラチナ製',
 	'新鮮な',
@@ -201,7 +200,7 @@ export const itemPrefixes = [
 	'高圧',
 	'異常',
 	'粗挽き',
-];
+]
 
 export const items = [
 	'ナス',
@@ -446,7 +445,7 @@ export const items = [
 	'グレーチング',
 	'繝九Λ縺ｮ縺ｿ縺晄ｱ',
 	'スーパーカミオカンデ',
-];
+]
 
 export const and = [
 	'に擬態した',
@@ -456,22 +455,22 @@ export const and = [
 	'を虐げる',
 	'を侍らせた',
 	'が上に乗った',
-];
+]
 
 export function genItem(seedOrRng?: (() => number) | string | number) {
 	const rng = seedOrRng
 		? typeof seedOrRng === 'function'
 			? seedOrRng
 			: seedrandom(seedOrRng.toString())
-		: Math.random;
+		: Math.random
 
-	let item = '';
-	if (Math.floor(rng() * 5) !== 0) item += itemPrefixes[Math.floor(rng() * itemPrefixes.length)];
-	item += items[Math.floor(rng() * items.length)];
+	let item = ''
+	if (Math.floor(rng() * 5) !== 0) item += itemPrefixes[Math.floor(rng() * itemPrefixes.length)]
+	item += items[Math.floor(rng() * items.length)]
 	if (Math.floor(rng() * 10) === 0) {
-		item += and[Math.floor(rng() * and.length)];
-		if (Math.floor(rng() * 5) !== 0) item += itemPrefixes[Math.floor(rng() * itemPrefixes.length)];
-		item += items[Math.floor(rng() * items.length)];
+		item += and[Math.floor(rng() * and.length)]
+		if (Math.floor(rng() * 5) !== 0) item += itemPrefixes[Math.floor(rng() * itemPrefixes.length)]
+		item += items[Math.floor(rng() * items.length)]
 	}
-	return item;
+	return item
 }
