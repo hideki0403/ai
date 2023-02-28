@@ -21,10 +21,6 @@ export default class extends Module {
 	@autobind
 	private async mentionHook(msg: Message): Promise<boolean> {
 		if (!msg.includes(['絵文字', 'emoji'])) return false
-		if (msg.isDm) {
-			msg.reply(serifs.emojiMaker.noDm)
-			return true
-		}
 
 		// ノートの詳細を取得
 		const referNote = await this.aira.api('notes/show', {
