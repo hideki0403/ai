@@ -33,13 +33,6 @@ export default class extends Module {
 			return true
 		}
 
-		const text = referNote.reply?.text
-		const author = referNote.reply?.user.username
-		if (!text || !author) {
-			msg.reply(serifs.emojiMaker.noteNotFound)
-			return true
-		}
-
 		// オプションのパース
 		const args = referNote.text!.replace(/ +/g, ' ').split(' ')
 		const options = {} as { [key: string]: string }
@@ -49,6 +42,16 @@ export default class extends Module {
 			if (!arg.startsWith('--')) continue
 			const parsedArg = arg.replace('--', '').split('=')
 			options[parsedArg[0]] = parsedArg[1] ?? 'true'
+		}
+
+		// 引数から入力されたテキストを使用するかどうか
+		const useArgInput = !!options.text
+
+		const text = useArgInput ? options.text.replace('$', '\n') : referNote.reply?.text
+		const author = useArgInput ? referNote.user.username : referNote.reply?.user.username
+		if (!text || !author) {
+			msg.reply(serifs.emojiMaker.noteNotFound)
+			return true
 		}
 
 		// 文字列をmecabでカタカナに変換してからローマ字に変換
