@@ -53,7 +53,7 @@ export default class extends Module {
 
 		// 文字列をmecabでカタカナに変換してからローマ字に変換
 		// 最大64文字
-		const yomigana = (await mecab(text)).map(char => char[8]).join('')
+		const yomigana = (await mecab(text.replace('\n', ''))).map(char => char[8]).join('')
 
 		// IDが指定されていればそっちを優先してあげる
 		const emojiName = (options.id || kuroshiro.Util.kanaToRomaji(yomigana) || text).toLowerCase().replace(/[^0-9a-z_-]/gi, '').substring(0, 64)
