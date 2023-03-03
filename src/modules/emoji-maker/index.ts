@@ -33,13 +33,6 @@ export default class extends Module {
 			return true
 		}
 
-		const text = referNote.reply?.text
-		const author = referNote.reply?.user.username
-		if (!text || !author) {
-			msg.reply(serifs.emojiMaker.noteNotFound)
-			return true
-		}
-
 		// オプションのパース
 		const args = referNote.text!.replace(/ +/g, ' ').split(' ')
 		const options = {} as { [key: string]: string }
@@ -51,9 +44,19 @@ export default class extends Module {
 			options[parsedArg[0]] = parsedArg[1] ?? 'true'
 		}
 
+		// 引数から入力されたテキストを使用するかどうか
+		const useArgInput = !!options.text
+
+		const text = useArgInput ? options.text.replace('$', '\n') : referNote.reply?.text
+		const author = useArgInput ? referNote.user.username : referNote.reply?.user.username
+		if (!text || !author) {
+			msg.reply(serifs.emojiMaker.noteNotFound)
+			return true
+		}
+
 		// 文字列をmecabでカタカナに変換してからローマ字に変換
 		// 最大64文字
-		const yomigana = (await mecab(text)).map(char => char[8]).join('')
+		const yomigana = (await mecab(text.replace('\n', ''))).map(char => char[8]).join('')
 
 		// IDが指定されていればそっちを優先してあげる
 		const emojiName = (options.id || kuroshiro.Util.kanaToRomaji(yomigana) || text).toLowerCase().replace(/[^0-9a-z_-]/gi, '').substring(0, 64)
