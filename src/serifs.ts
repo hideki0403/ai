@@ -254,6 +254,7 @@ export default {
 	emojiMaker: {
 		noDm: 'DMで絵文字を作ることは出来ないから、ノートから試してみてね！',
 		noteNotFound: '絵文字を作る対象のノートが見つからないや...',
+		noEmojiId: '絵文字IDが指定されていないみたい...もう一度確認して試してみてね！',
 		exists: (id: string) => `この絵文字は既にあるかも！ :${id}:`,
 		tooLongText: (limit: number) => `絵文字にする文字列が長すぎるかも...${limit}文字以下で試してみてね！`,
 		success: '絵文字が出来たよ！',

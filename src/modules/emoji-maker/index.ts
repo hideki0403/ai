@@ -61,6 +61,12 @@ export default class extends Module {
 		// IDが指定されていればそっちを優先してあげる
 		const emojiName = (options.id || kuroshiro.Util.kanaToRomaji(yomigana) || text).toLowerCase().replace(/[^0-9a-z_-]/gi, '').substring(0, 64)
 
+		// 絵文字IDが空ならエラーを返す
+		if (!emojiName) {
+			msg.reply(serifs.emojiMaker.noEmojiId)
+			return true
+		}
+
 		const isRegister = options.register || msg.includes(['登録', '追加'])
 		if (isRegister) {
 			// 既に対象の絵文字が登録されていないかチェック
@@ -101,15 +107,15 @@ export default class extends Module {
 			if (!emojiRes) return true
 
 			const emojiRegisterName = referNote.user.username
-			const alias = [emojiRegisterName]
+			const license = [emojiRegisterName]
 
-			if (emojiRegisterName !== author) alias.push(author)
+			if (emojiRegisterName !== author) license.push(author)
 
 			await this.aira.api('admin/emoji/update', {
 				id: emojiRes.id,
 				name: emojiName,
 				category: 'カスタム文字',
-				aliases: alias
+				license: license.join(',')
 			})
 		}
 
@@ -129,7 +135,7 @@ export default class extends Module {
 		const result = {} as {[key: string]: boolean}
 		
 		for (const emoji of emojis) {
-			const target = remoteEmojis.find(item => item.name === emoji && item.aliases.includes(author))
+			const target = remoteEmojis.find(item => item.name === emoji && item.license.split(',').includes(author))
 			if (!target) {
 				result[emoji] = false
 				continue
