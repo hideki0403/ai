@@ -59,7 +59,7 @@ export default class extends Module {
 		const yomigana = (await mecab(text.replace('\n', ''))).map(char => char[8]).join('')
 
 		// IDが指定されていればそっちを優先してあげる
-		const emojiName = (options.id || kuroshiro.Util.kanaToRomaji(yomigana) || text).toLowerCase().replace(/[^0-9a-z_-]/gi, '').substring(0, 64)
+		const emojiName = (options.id || kuroshiro.Util.kanaToRomaji(yomigana) || text).toLowerCase().replace(/[^0-9a-z_]/gi, '').substring(0, 64)
 
 		// 絵文字IDが空ならエラーを返す
 		if (!emojiName) {
