@@ -101,15 +101,15 @@ export default class extends Module {
 			if (!emojiRes) return true
 
 			const emojiRegisterName = referNote.user.username
-			const alias = [emojiRegisterName]
+			const license = [emojiRegisterName]
 
-			if (emojiRegisterName !== author) alias.push(author)
+			if (emojiRegisterName !== author) license.push(author)
 
 			await this.aira.api('admin/emoji/update', {
 				id: emojiRes.id,
 				name: emojiName,
 				category: 'カスタム文字',
-				aliases: alias
+				license: license.join(',')
 			})
 		}
 
@@ -129,7 +129,7 @@ export default class extends Module {
 		const result = {} as {[key: string]: boolean}
 		
 		for (const emoji of emojis) {
-			const target = remoteEmojis.find(item => item.name === emoji && item.aliases.includes(author))
+			const target = remoteEmojis.find(item => item.name === emoji && item.license.split(',').includes(author))
 			if (!target) {
 				result[emoji] = false
 				continue
