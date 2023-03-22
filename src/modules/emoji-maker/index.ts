@@ -61,6 +61,12 @@ export default class extends Module {
 		// IDが指定されていればそっちを優先してあげる
 		const emojiName = (options.id || kuroshiro.Util.kanaToRomaji(yomigana) || text).toLowerCase().replace(/[^0-9a-z_-]/gi, '').substring(0, 64)
 
+		// 絵文字IDが空ならエラーを返す
+		if (!emojiName) {
+			msg.reply(serifs.emojiMaker.noEmojiId)
+			return true
+		}
+
 		const isRegister = options.register || msg.includes(['登録', '追加'])
 		if (isRegister) {
 			// 既に対象の絵文字が登録されていないかチェック
