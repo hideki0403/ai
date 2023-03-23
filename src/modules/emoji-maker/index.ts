@@ -115,6 +115,7 @@ export default class extends Module {
 				id: emojiRes.id,
 				name: emojiName,
 				category: 'カスタム文字',
+				aliases: [],
 				license: license.join(',')
 			})
 		}
