@@ -128,15 +128,16 @@ export default class extends Module {
 	@autobind
 	private async removeEmoji(msg: Message, text: string, author: string): Promise<void> {
 		const emojis = mfm.parseSimple(text).filter(node => node.type === 'emojiCode').map(node => (node as mfm.MfmEmojiCode).props.name)
-		const remoteEmojis = await this.aira.api('admin/emoji/list', {
-			query: author,
-			limit: 100
-		}) as Misskey.entities.CustomEmoji[]
-
 		const result = {} as {[key: string]: boolean}
 		
 		for (const emoji of emojis) {
+			const remoteEmojis = await this.aira.api('admin/emoji/list', {
+				query: emoji,
+				limit: 1
+			}) as Misskey.entities.CustomEmoji[]
+
 			const target = remoteEmojis.find((item: any) => item.name === emoji && item.license.split(',').includes(author))
+			
 			if (!target) {
 				result[emoji] = false
 				continue
