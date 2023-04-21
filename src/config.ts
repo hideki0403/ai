@@ -22,5 +22,8 @@ type Config = {
 	serverMonitoring: boolean,
 	mecab?: string,
 	mecabDic?: string,
-	memoryDir?: string
+	memoryDir?: string,
+	watchDog?: boolean,
+	watchDogInterval?: number,
+	watchDogTimeout?: number,
 }

@@ -51,6 +51,7 @@ export default class Aira {
 	private mentionHooks: MentionHook[] = []
 	private contextHooks: { [moduleName: string]: ContextHook } = {}
 	private timeoutCallbacks: { [moduleName: string]: TimeoutCallback } = {}
+	private watchDogTimer: NodeJS.Timeout | null = null
 	public db!: Loki
 	public lastSleepedAt!: number
 	private meta!: Loki.Collection<Meta>
@@ -131,6 +132,23 @@ export default class Aira {
 				this.run()
 			}
 		})
+
+		// WatchDog
+		if (config.watchDog) {
+			this.log('WatchDog enabled')
+
+			this.stream.on('ping' as any, () => {
+				clearTimeout(this.watchDogTimer ?? undefined)
+			})
+
+			setInterval(() => {
+				this.watchDogTimer = setTimeout(() => {
+					this.log(pico.red('Websocket connection is dead. Restarting...'))
+					process.exit(1)
+				}, config.watchDogTimeout ?? 30000)
+				this.stream.send('ping', null)
+			}, config.watchDogInterval ?? 60000)
+		}
 	}
 
 	@autobind

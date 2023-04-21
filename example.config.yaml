@@ -13,3 +13,6 @@ serverMonitoring: true # サーバー監視の機能を有効にする場合は 
 mecab: /usr/local/bin/mecab # MeCab のインストールパス (ソースからインストールした場合、大体は /usr/local/bin/mecab)
 mecabDic: null # MeCab の辞書ファイルパス (オプション)
 memoryDir: ./ # memory.jsonの保存先（オプション、デフォルトは'./'（レポジトリのルートです））
+watchDog: false # Websocketの接続を監視する機能を有効にする場合は true を入れる (サーバーがWebsocketのping/pongに対応している必要があります)
+watchDogInterval: 60000 # Websocketのpingを送信する間隔 (ミリ秒)
+watchDogTimeout: 30000 # Websocketのpongを受信できなかった場合に切断するまでの時間 (ミリ秒)

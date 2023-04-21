@@ -136,7 +136,7 @@ export default class extends Module {
 		const result = {} as {[key: string]: boolean}
 		
 		for (const emoji of emojis) {
-			const target = remoteEmojis.find(item => item.name === emoji && item.license.split(',').includes(author))
+			const target = remoteEmojis.find((item: any) => item.name === emoji && item.license.split(',').includes(author))
 			if (!target) {
 				result[emoji] = false
 				continue
