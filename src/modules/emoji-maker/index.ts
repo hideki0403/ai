@@ -100,22 +100,16 @@ export default class extends Module {
 
 		if (isRegister) {
 			this.log('Adding emoji...')
-			const emojiRes = await this.aira.api('admin/emoji/add', {
-				fileId: file.id
-			})
-
-			if (!emojiRes) return true
 
 			const emojiRegisterName = referNote.user.username
 			const license = [emojiRegisterName]
 
 			if (emojiRegisterName !== author) license.push(author)
 
-			await this.aira.api('admin/emoji/update', {
-				id: emojiRes.id,
+			await this.aira.api('admin/emoji/add', {
+				fileId: file.id,
 				name: emojiName,
 				category: 'カスタム文字',
-				aliases: [],
 				license: license.join(',')
 			})
 		}
