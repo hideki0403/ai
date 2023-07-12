@@ -19,6 +19,7 @@ type Config = {
 	chartEnabled: boolean,
 	mazeEnabled: boolean,
 	timeSignalEnabled: boolean,
+	newEmojiDetectorEnabled: boolean,
 	serverMonitoring: boolean,
 	mecab?: string,
 	mecabDic?: string,
