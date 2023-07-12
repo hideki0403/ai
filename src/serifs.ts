@@ -265,6 +265,13 @@ export default {
 	},
 
 	/**
+	 * 新規絵文字通知
+	 */
+	newEmojiDetector: {
+		notify: (emoji: string) => `新しい絵文字が追加されたみたい！\n$[x2 :${emoji}:] (\`:${emoji}:\`)`
+	},
+
+	/**
 	 * 占い
 	 */
 	fortune: {

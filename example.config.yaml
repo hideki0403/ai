@@ -9,6 +9,7 @@ keywordEnabled: true  # キーワードを覚える機能 (MeCab が必要) を�
 chartEnabled: true # チャート機能を無効化する場合は false を入れてください
 mazeEnabled: true # 迷路機能を無効化する場合は false を入れてください
 timeSignalEnabled: true # 日付変更時のお知らせ機能を無効化する場合は false を入れてください
+newEmojiDetectorEnabled: true # 新規絵文字の検出機能を無効化する場合は false を入れてください
 serverMonitoring: true # サーバー監視の機能を有効にする場合は true を入れる (無効にする場合は false)
 mecab: /usr/local/bin/mecab # MeCab のインストールパス (ソースからインストールした場合、大体は /usr/local/bin/mecab)
 mecabDic: null # MeCab の辞書ファイルパス (オプション)
