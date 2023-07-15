@@ -10,6 +10,7 @@ chartEnabled: true # チャート機能を無効化する場合は false を入�
 mazeEnabled: true # 迷路機能を無効化する場合は false を入れてください
 timeSignalEnabled: true # 日付変更時のお知らせ機能を無効化する場合は false を入れてください
 newEmojiDetectorEnabled: true # 新規絵文字の検出機能を無効化する場合は false を入れてください
+ignoreCategory: カスタム文字 # 新規絵文字の検出機能を無効にする絵文字カテゴリーを指定します。カンマ区切りで複数指定可能です。例: カスタム文字,自動生成,テスト
 serverMonitoring: true # サーバー監視の機能を有効にする場合は true を入れる (無効にする場合は false)
 mecab: /usr/local/bin/mecab # MeCab のインストールパス (ソースからインストールした場合、大体は /usr/local/bin/mecab)
 mecabDic: null # MeCab の辞書ファイルパス (オプション)

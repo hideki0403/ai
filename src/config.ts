@@ -20,6 +20,7 @@ type Config = {
 	mazeEnabled: boolean,
 	timeSignalEnabled: boolean,
 	newEmojiDetectorEnabled: boolean,
+	ignoreCategory: string,
 	serverMonitoring: boolean,
 	mecab?: string,
 	mecabDic?: string,
