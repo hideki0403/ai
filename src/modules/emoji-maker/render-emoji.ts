@@ -1,4 +1,4 @@
-import * as libemoji from '@hideki0403/libemoji.js'
+import * as libemoji from '@hideki0403/emoji.js'
 import chroma from 'chroma-js'
 import random from 'random-seed'
 import parseBoolean from '@/utils/parse-boolean'
@@ -10,7 +10,8 @@ type renderEmojiOptions = {
 	color?: string,
 	align?: string,
 	'fixed-text'?: string,
-	'no-stretch'?: string
+	'no-stretch'?: string,
+	'flexible-width'?: string
 }
 
 export function renderEmoji(text: string, colorSeed?: string, options: renderEmojiOptions = {}) {
@@ -27,9 +28,9 @@ export function renderEmoji(text: string, colorSeed?: string, options: renderEmo
 		disableStretch: options['no-stretch'] ? parseBoolean(options['no-stretch']) : false,
 		typefaceFile: fontFile,
 		textSizeFixed: options['fixed-text'] ? parseBoolean(options['fixed-text']) : false,
-		textAlign: textAlign
+		textAlign: textAlign,
+		flexibleWidth: options['flexible-width'] ? parseBoolean(options['flexible-width']) : false
 	})
 
-	return result.buffer
+	return result
 }
-
