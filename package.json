@@ -9,7 +9,7 @@
 		"force": "git fetch --all && git reset --hard origin/master && pnpm run update"
 	},
 	"dependencies": {
-		"@hideki0403/libemoji.js": "github:hideki0403/libemoji.js",
+		"@hideki0403/emoji.js": "1.0.0",
 		"app-root-path": "3.1.0",
 		"autobind-decorator": "2.4.0",
 		"canvas": "2.11.0",
