@@ -9,7 +9,12 @@ keywordEnabled: true  # キーワードを覚える機能 (MeCab が必要) を�
 chartEnabled: true # チャート機能を無効化する場合は false を入れてください
 mazeEnabled: true # 迷路機能を無効化する場合は false を入れてください
 timeSignalEnabled: true # 日付変更時のお知らせ機能を無効化する場合は false を入れてください
+newEmojiDetectorEnabled: true # 新規絵文字の検出機能を無効化する場合は false を入れてください
+ignoreCategory: カスタム文字 # 新規絵文字の検出機能を無効にする絵文字カテゴリーを指定します。カンマ区切りで複数指定可能です。例: カスタム文字,自動生成,テスト
 serverMonitoring: true # サーバー監視の機能を有効にする場合は true を入れる (無効にする場合は false)
 mecab: /usr/local/bin/mecab # MeCab のインストールパス (ソースからインストールした場合、大体は /usr/local/bin/mecab)
 mecabDic: null # MeCab の辞書ファイルパス (オプション)
 memoryDir: ./ # memory.jsonの保存先（オプション、デフォルトは'./'（レポジトリのルートです））
+watchDog: false # Websocketの接続を監視する機能を有効にする場合は true を入れる (サーバーがWebsocketのping/pongに対応している必要があります)
+watchDogInterval: 60000 # Websocketのpingを送信する間隔 (ミリ秒)
+watchDogTimeout: 30000 # Websocketのpongを受信できなかった場合に切断するまでの時間 (ミリ秒)

@@ -12,6 +12,7 @@ import PingModule from './modules/ping'
 import EmojiMakerModule from './modules/emoji-maker'
 import EmojiModule from './modules/emoji'
 import EmojiReactModule from './modules/emoji-react'
+import NewEmojiDetectorModule from './modules/new-emoji-detector'
 import FortuneModule from './modules/fortune'
 import GuessingGameModule from './modules/guessing-game'
 import KazutoriModule from './modules/kazutori'
@@ -50,6 +51,7 @@ new Aira([
 	new EmojiMakerModule(),
 	new EmojiModule(),
 	new EmojiReactModule(),
+	new NewEmojiDetectorModule(),
 	new FortuneModule(),
 	new GuessingGameModule(),
 	new KazutoriModule(),
