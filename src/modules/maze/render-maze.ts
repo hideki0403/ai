@@ -1,5 +1,5 @@
 import gen from 'random-seed';
-import { createCanvas } from 'canvas';
+import { createCanvas, type CanvasRenderingContext2D } from 'canvas';
 
 import { CellType } from './maze.js';
 import { themes } from './themes.js';

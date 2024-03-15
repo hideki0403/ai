@@ -380,7 +380,8 @@ export default class Aira {
 			url: `${config.host}/api/drive/files/create`,
 			body: form
 		}).json();
-		return res;
+
+		return res as Misskey.entities.DriveFile;
 	}
 
 	/**

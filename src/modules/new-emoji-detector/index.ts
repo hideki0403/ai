@@ -1,8 +1,8 @@
 import { bindThis } from '@/decorators.js';
-import Misskey from 'misskey-js'
-import serifs from '@/serifs'
-import Module from '@/module'
-import config from '@/config'
+import * as Misskey from 'misskey-js'
+import serifs from '@/serifs.js'
+import Module from '@/module.js'
+import config from '@/config.js'
 
 
 export default class extends Module {
@@ -18,8 +18,8 @@ export default class extends Module {
 	}
 
 	@bindThis
-	private async onEmojiAdded(emoji: Misskey.entities.CustomEmoji) {
-		if (this.ignoreCategory.includes(emoji.category)) return
+	private async onEmojiAdded(emoji: Misskey.entities.EmojiDetailed) {
+		if (emoji.category && this.ignoreCategory.includes(emoji.category)) return
 		this.log(`New emoji detected: ${emoji.name}`)
 		await this.aira.post({
 			text: serifs.newEmojiDetector.notify(emoji.name),

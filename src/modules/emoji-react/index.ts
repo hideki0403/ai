@@ -3,7 +3,6 @@ import { parse } from 'twemoji-parser';
 import * as Misskey from 'misskey-js';
 
 import Module from '@/module.js';
-import Stream from '@/stream.js';
 import includes from '@/utils/includes.js';
 import { sleep } from '@/utils/sleep.js';
 

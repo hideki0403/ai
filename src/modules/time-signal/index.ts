@@ -2,10 +2,10 @@ import { bindThis } from '@/decorators.js';
 import cron from 'node-cron'
 import dayjs from 'dayjs'
 import 'dayjs/locale/ja'
-import isLeapYear from 'dayjs/plugin/isLeapYear'
-import Module from '@/module'
-import serifs from '@/serifs'
-import config from '@/config'
+import isLeapYear from 'dayjs/plugin/isLeapYear.js'
+import Module from '@/module.js'
+import serifs from '@/serifs.js'
+import config from '@/config.js'
 
 dayjs.locale('ja')
 dayjs.extend(isLeapYear)

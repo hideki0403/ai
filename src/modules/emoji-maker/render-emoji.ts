@@ -1,8 +1,8 @@
 import * as libemoji from '@hideki0403/emoji.js'
 import chroma from 'chroma-js'
 import random from 'random-seed'
-import parseBoolean from '@/utils/parse-boolean'
-import fonts from '@/utils/fonts'
+import parseBoolean from '@/utils/parse-boolean.js'
+import fonts from '@/utils/fonts.js'
 
 type renderEmojiOptions = {
 	font?: string,
