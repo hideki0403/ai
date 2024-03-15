@@ -1,21 +1,22 @@
-import autobind from 'autobind-decorator'
-import Aira from '@/aira'
-import IModule from '@/module'
-import getDate from '@/utils/get-date'
-import Misskey from 'misskey-js'
-import { genItem } from '@/vocabulary'
+import { bindThis } from '@/decorators.js';
+import * as Misskey from 'misskey-js';
+import Aira from '@/aira.js';
+import IModule from '@/module.js';
+import getDate from '@/utils/get-date.js';
+import { genItem } from '@/vocabulary.js';
 
 export type FriendDoc = {
-	userId: string
-	user: Misskey.entities.User
-	name?: string | null
-	love?: number
-	lastLoveIncrementedAt?: string
-	todayLoveIncrements?: number
-	perModulesData?: any
-	married?: boolean
-	transferCode?: string
-}
+	userId: string;
+	user: Misskey.entities.User;
+	name?: string | null;
+	love?: number;
+	lastLoveIncrementedAt?: string;
+	todayLoveIncrements?: number;
+	perModulesData?: any;
+	married?: boolean;
+	transferCode?: string;
+	reversiStrength?: number | null;
+};
 
 export default class Friend {
 	private aira: Aira
@@ -69,7 +70,7 @@ export default class Friend {
 		}
 	}
 
-	@autobind
+	@bindThis
 	public updateUser(user: Partial<Misskey.entities.User>) {
 		this.doc.user = {
 			...this.doc.user,
@@ -78,7 +79,7 @@ export default class Friend {
 		this.save()
 	}
 
-	@autobind
+	@bindThis
 	public getPerModulesData(module: IModule) {
 		if (this.doc.perModulesData == null) {
 			this.doc.perModulesData = {}
@@ -92,7 +93,7 @@ export default class Friend {
 		return this.doc.perModulesData[module.name]
 	}
 
-	@autobind
+	@bindThis
 	public setPerModulesData(module: IModule, data: any) {
 		if (this.doc.perModulesData == null) {
 			this.doc.perModulesData = {}
@@ -103,7 +104,7 @@ export default class Friend {
 		this.save()
 	}
 
-	@autobind
+	@bindThis
 	public incLove(amount = 1) {
 		const today = getDate()
 
@@ -127,7 +128,7 @@ export default class Friend {
 		this.aira.log(`💗 ${this.userId} +${amount}`)
 	}
 
-	@autobind
+	@bindThis
 	public decLove(amount = 1) {
 		// 親愛度MAXなら下げない
 		if (this.doc.love === 100) return
@@ -148,18 +149,32 @@ export default class Friend {
 		this.aira.log(`💢 ${this.userId} -${amount}`)
 	}
 
-	@autobind
+	@bindThis
 	public updateName(name: string) {
 		this.doc.name = name
 		this.save()
 	}
 
-	@autobind
+	@bindThis
+	public updateReversiStrength(strength: number | null) {
+		if (strength == null) {
+			this.doc.reversiStrength = null;
+			this.save();
+			return;
+		}
+
+		if (strength < 0) strength = 0;
+		if (strength > 5) strength = 5;
+		this.doc.reversiStrength = strength;
+		this.save();
+	}
+
+	@bindThis
 	public save() {
 		this.aira.friends.update(this.doc)
 	}
 
-	@autobind
+	@bindThis
 	public generateTransferCode(): string {
 		const code = genItem()
 
@@ -169,7 +184,7 @@ export default class Friend {
 		return code
 	}
 
-	@autobind
+	@bindThis
 	public transferMemory(code: string): boolean {
 		const src = this.aira.friends.findOne({
 			transferCode: code

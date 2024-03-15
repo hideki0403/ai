@@ -346,6 +346,13 @@ export default {
 		foryou: '描いたよ！'
 	},
 
+	checkCustomEmojis: {
+		post: (server_name, num) => `${server_name}に${num}件の絵文字が追加されました！`,
+		emojiPost: emoji => `:${emoji}:\n(\`${emoji}\`) #AddCustomEmojis`,
+		postOnce: (server_name, num, text) => `${server_name}に${num}件の絵文字が追加されました！\n${text} #AddCustomEmojis`,
+		emojiOnce: emoji => `:${emoji}:(\`${emoji}\`)`
+	},
+
 	sleepReport: {
 		report: (hours: mixedString) => `んぅ...${hours}時間くらい寝ちゃってたみたい...`,
 		reportUtatane: 'ん... うたた寝しちゃってた...',

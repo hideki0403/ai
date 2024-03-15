@@ -1,26 +1,45 @@
 {
+	"$schema": "https://json.schemastore.org/tsconfig",
 	"compilerOptions": {
-		"target": "ES2021",
-		"module": "CommonJS",
-		"outDir": "./built",
+		"target": "ES2022",
+		"module": "nodenext",
+		"moduleResolution": "nodenext",
+		"declaration": true,
+		"declarationMap": true,
+		"sourceMap": true,
 		"rootDir": "./src",
-		"baseUrl": "./",
+		"outDir": "./built/",
+		"removeComments": true,
+		"resolveJsonModule": true,
+		"strict": true,
+		"strictFunctionTypes": true,
+		"strictNullChecks": true,
+		"experimentalDecorators": true,
+		"noImplicitReturns": true,
+		"noImplicitAny": false,
+		"esModuleInterop": true,
+		"typeRoots": [
+			"./node_modules/@types"
+		],
+		"lib": [
+			"esnext",
+			"dom"
+		],
 		"paths": {
-			"@/*": [
-				"./src/*"
-			]
+			"@/*": ["./src/*"]
 		},
 		"plugins": [
-			{
-				"transform": "@zerollup/ts-transform-paths"
-			}
-		],
-		"resolveJsonModule": true,
-		"esModuleInterop": true,
-		"forceConsistentCasingInFileNames": true,
-		"strict": true,
-		"skipLibCheck": true,
-		"experimentalDecorators": true,
-		"emitDecoratorMetadata": true
-	}
+      // Transform paths in output .js files
+      { "transform": "typescript-transform-paths" },
+
+      // Transform paths in output .d.ts files (Include this line if you output declarations files)
+      { "transform": "typescript-transform-paths", "afterDeclarations": true }
+    ]
+	},
+	"include": [
+		"src/**/*"
+	],
+	"exclude": [
+		"node_modules"
+	],
 }

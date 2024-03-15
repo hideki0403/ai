@@ -7,19 +7,19 @@ const packageJson = require(rootPath.resolve('package.json')) as { version: stri
 
 config.version = packageJson.version
 
-export default config as Config
-
 type Config = {
 	version: string,
 	host: string,
 	token: string,
 	master?: string,
 	keywordEnabled: boolean,
+	reversiEnabled: boolean,
 	notingEnabled: boolean,
 	chartEnabled: boolean,
 	mazeEnabled: boolean,
 	timeSignalEnabled: boolean,
 	newEmojiDetectorEnabled: boolean,
+	newEmojiAnnouncementAtOnce?: boolean,
 	ignoreCategory: string,
 	serverMonitoring: boolean,
 	mecab?: string,
@@ -29,3 +29,5 @@ type Config = {
 	watchDogInterval?: number,
 	watchDogTimeout?: number,
 }
+
+export default config as Config;

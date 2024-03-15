@@ -1,15 +1,15 @@
-import autobind from 'autobind-decorator'
-import Module from '@/module'
-import serifs from '@/serifs'
-import { genMaze } from './gen-maze'
-import { renderMaze } from './render-maze'
-import Message from '@/message'
-import config from '@/config'
+import { bindThis } from '@/decorators.js';
+import Module from '@/module.js';
+import serifs from '@/serifs.js';
+import { genMaze } from './gen-maze.js';
+import { renderMaze } from './render-maze.js';
+import Message from '@/message.js';
+import config from '@/config.js';
 
 export default class extends Module {
 	public readonly name = 'maze'
 
-	@autobind
+	@bindThis
 	public install() {
 		if (config.mazeEnabled === false) return {}
 		// this.post()
@@ -20,7 +20,7 @@ export default class extends Module {
 		}
 	}
 
-	@autobind
+	@bindThis
 	private async post() {
 		const now = new Date()
 		if (now.getHours() !== 22) return
@@ -40,10 +40,10 @@ export default class extends Module {
 		})
 	}
 
-	@autobind
-	private async genMazeFile(seed: string, size?: string): Promise<any> {
-		this.log('Maze generating...')
-		const maze = genMaze(seed, size)
+	@bindThis
+	private async genMazeFile(seed, size?): Promise<any> {
+		this.log('Maze generating...');
+		const maze = genMaze(seed, size);
 
 		this.log('Maze rendering...')
 		const data = renderMaze(seed, maze)
@@ -57,7 +57,7 @@ export default class extends Module {
 		return file
 	}
 
-	@autobind
+	@bindThis
 	private async mentionHook(msg: Message) {
 		if (msg.includes(['迷路'])) {
 			let size: string | undefined

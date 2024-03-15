@@ -1,4 +1,5 @@
-import { xorshift7 as seedrandom } from 'seedrandom'
+import seedrandom from 'seedrandom';
+
 export const itemPrefixes = [
 	'プラチナ製',
 	'新鮮な',
@@ -445,7 +446,8 @@ export const items = [
 	'グレーチング',
 	'繝九Λ縺ｮ縺ｿ縺晄ｱ',
 	'スーパーカミオカンデ',
-]
+	'デースケドガー',
+];
 
 export const and = [
 	'に擬態した',

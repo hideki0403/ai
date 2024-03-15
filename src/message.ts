@@ -1,13 +1,13 @@
-import autobind from 'autobind-decorator'
-import pico from 'picocolors'
-import Misskey from 'misskey-js'
+import { bindThis } from '@/decorators.js';
+import chalk from 'chalk';
+import * as Misskey from 'misskey-js';
 
-import Aira from '@/aira'
-import Friend from '@/friend'
-import includes from '@/utils/includes'
-import or from '@/utils/or'
-import config from '@/config'
-import delay from '@/utils/delay'
+import Aira from '@/aira.js';
+import Friend from '@/friend.js';
+import includes from '@/utils/includes.js';
+import or from '@/utils/or.js';
+import config from '@/config.js';
+import { sleep } from '@/utils/sleep.js';
 
 export default class Message {
 	private aira: Aira
@@ -68,7 +68,7 @@ export default class Message {
 		})
 	}
 
-	@autobind
+	@bindThis
 	public async reply(text: string | null, opts?: {
 		file?: any
 		cw?: string
@@ -77,10 +77,10 @@ export default class Message {
 	}) {
 		if (text == null) return
 
-		this.aira.log(`>>> Sending reply to ${pico.underline(this.id)}`)
+		this.aira.log(`>>> Sending reply to ${chalk.underline(this.id)}`)
 
 		if (!opts?.immediate) {
-			await delay(2000)
+			await sleep(2000);
 		}
 
 		return await this.aira.post({
@@ -92,12 +92,12 @@ export default class Message {
 		});
 	}
 
-	@autobind
+	@bindThis
 	public includes(words: string[]): boolean {
 		return includes(this.text, words)
 	}
 
-	@autobind
+	@bindThis
 	public or(words: (string | RegExp)[]): boolean {
 		return or(this.text, words)
 	}

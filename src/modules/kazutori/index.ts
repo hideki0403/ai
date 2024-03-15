@@ -1,11 +1,10 @@
-import autobind from 'autobind-decorator'
-import * as loki from 'lokijs'
-import Misskey from 'misskey-js'
-
-import Module from '@/module'
-import Message from '@/message'
-import serifs from '@/serifs'
-import { acct } from '@/utils/acct'
+import { bindThis } from '@/decorators.js';
+import loki from 'lokijs';
+import * as Misskey from 'misskey-js';
+import Module from '@/module.js';
+import Message from '@/message.js';
+import serifs from '@/serifs.js';
+import { acct } from '@/utils/acct.js';
 
 type Game = {
 	votes: {
@@ -28,7 +27,7 @@ export default class extends Module {
 
 	private games!: loki.Collection<Game>
 
-	@autobind
+	@bindThis
 	public install() {
 		this.games = this.aira.getCollection('kazutori')
 
@@ -41,7 +40,7 @@ export default class extends Module {
 		}
 	}
 
-	@autobind
+	@bindThis
 	private async mentionHook(msg: Message) {
 		if (!msg.includes(['数取り'])) return false
 
@@ -83,7 +82,7 @@ export default class extends Module {
 		return true
 	}
 
-	@autobind
+	@bindThis
 	private async contextHook(key: any, msg: Message) {
 		if (msg.text == null) return {
 			reaction: 'hmm'
@@ -140,7 +139,7 @@ export default class extends Module {
 	/**
 	 * 終了すべきゲームがないかチェック
 	 */
-	@autobind
+	@bindThis
 	private crawleGameEnd() {
 		const game = this.games.findOne({
 			isEnded: false
@@ -157,7 +156,7 @@ export default class extends Module {
 	/**
 	 * ゲームを終わらせる
 	 */
-	@autobind
+	@bindThis
 	private finish(game: Game) {
 		game.isEnded = true
 		this.games.update(game)
