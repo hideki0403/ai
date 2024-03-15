@@ -388,7 +388,7 @@ export default class Aira {
 	 * 投稿します
 	 */
 	@bindThis
-	public async post(param: any) {
+	public async post(param: Misskey.Endpoints['notes/create']['req']) {
 		const res = await this.api('notes/create', param)
 		return res.createdNote
 	}

@@ -168,6 +168,41 @@ export default {
 	},
 
 	/**
+	 * リバーシ
+	 */
+	reversi: {
+		/**
+		 * リバーシへの誘いを承諾するとき
+		 */
+		ok: '良いよっ！',
+
+		/**
+		 * リバーシへの誘いを断るとき
+		 */
+		decline: 'ごめんね、今はリバーシできないの...',
+
+		/**
+		 * 対局開始
+		 */
+		started: (name: mixedString, strength: mixedString) => `${name}さんと対局を始めたよ！ (強さ${strength})`,
+
+		/**
+		 * 勝ったとき
+		 */
+		iWon: (name: mixedString) => `${name}に勝てた！`,
+
+		/**
+		 * 負けたとき
+		 */
+		iLose: (name: mixedString) => `${name}に負けちゃった...`,
+
+		/**
+		 * 引き分けたとき
+		 */
+		drawn: (name: mixedString) => `${name}と引き分けだった～`,
+	},
+
+	/**
 	 * 数当てゲーム
 	 */
 	guessingGame: {
