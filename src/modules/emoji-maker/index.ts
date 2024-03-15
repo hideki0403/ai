@@ -1,24 +1,24 @@
-import autobind from 'autobind-decorator'
+import { bindThis } from '@/decorators.js';
 import kuroshiro from 'kuroshiro'
-import Misskey from 'misskey-js'
+import * as Misskey from 'misskey-js'
 import * as mfm from 'mfm-js'
-import Module from '@/module'
-import Message from '@/message'
-import serifs from '@/serifs'
-import { mecab } from '@/utils/mecab'
-import { renderEmoji } from './render-emoji'
+import Module from '@/module.js'
+import Message from '@/message.js'
+import serifs from '@/serifs.js'
+import { mecab } from '@/utils/mecab.js'
+import { renderEmoji } from './render-emoji.js'
 
 export default class extends Module {
 	public readonly name = 'emoji-maker'
 
-	@autobind
+	@bindThis
 	public install() {
 		return {
 			mentionHook: this.mentionHook
 		}
 	}
 
-	@autobind
+	@bindThis
 	private async mentionHook(msg: Message): Promise<boolean> {
 		if (!msg.includes(['絵文字', 'emoji'])) return false
 
@@ -119,7 +119,7 @@ export default class extends Module {
 		return true
 	}
 
-	@autobind
+	@bindThis
 	private async removeEmoji(msg: Message, text: string, author: string): Promise<void> {
 		const emojis = mfm.parseSimple(text).filter(node => node.type === 'emojiCode').map(node => (node as mfm.MfmEmojiCode).props.name)
 		const result = {} as {[key: string]: boolean}
