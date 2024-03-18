@@ -50,8 +50,8 @@ export default class extends Module {
 
 		this.log('Image uploading...')
 		const file = await this.aira.upload(data, {
-			filename: 'maze.png',
-			contentType: 'image/png'
+			filename: 'maze.webp',
+			contentType: 'image/webp'
 		})
 
 		return file

@@ -1,5 +1,5 @@
 import gen from 'random-seed';
-import { createCanvas, type CanvasRenderingContext2D } from 'canvas';
+import { createCanvas, type SKRSContext2D } from '@napi-rs/canvas';
 
 import { CellType } from './maze.js';
 import { themes } from './themes.js';
@@ -16,7 +16,6 @@ export function renderMaze(seed: string, maze: CellType[][]) {
 
 	const canvas = createCanvas(imageSize, imageSize)
 	const ctx = canvas.getContext('2d')
-	ctx.antialias = 'none'
 
 	ctx.fillStyle = colors.bg1
 	ctx.beginPath()
@@ -27,7 +26,7 @@ export function renderMaze(seed: string, maze: CellType[][]) {
 	ctx.fillRect(margin / 2, margin / 2, imageSize - ((margin / 2) * 2), imageSize - ((margin / 2) * 2))
 
 	// Draw
-	function drawCell(ctx: CanvasRenderingContext2D, x: number, y: number, size: number, left: boolean, right: boolean, top: boolean, bottom: boolean, mark: boolean) {
+	function drawCell(ctx: SKRSContext2D, x: number, y: number, size: number, left: boolean, right: boolean, top: boolean, bottom: boolean, mark: boolean) {
 		const wallThickness = size / 6
 		const margin = size / 6
 		const markerMargin = size / 3
@@ -239,5 +238,5 @@ export function renderMaze(seed: string, maze: CellType[][]) {
 		}
 	}
 
-	return canvas.toBuffer()
+	return canvas.toBuffer('image/webp')
 }
