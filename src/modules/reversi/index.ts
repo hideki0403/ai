@@ -188,7 +188,6 @@ export default class extends Module {
 				});
 			} else if (msg.type == 'ended') {
 				gw.dispose();
-
 				this.onGameEnded(game);
 			} else if (msg.type == 'postNote') {
 				this.aira.api('notes/create', {
@@ -209,19 +208,15 @@ export default class extends Module {
 		});
 
 		// ゲームストリームから情報が流れてきたらそのままバックエンドプロセスに伝える
-		gw.addListener('*' as any, message => {
-			ai.send(message);
-
-			if (message.type === 'updateSettings') {
-				if (message.body.key === 'canPutEverywhere') {
-					if (message.body.value === true) {
-						gw.send('ready', false);
-					} else {
-						gw.send('ready', true);
-					}
-				}
-			}
-		});
+		gw.on('started', message => this.ipcSend(ai, 'started', message))
+		gw.on('ended', message => this.ipcSend(ai, 'ended', message))
+		gw.on('canceled', message => this.ipcSend(ai, 'canceled', message))
+		gw.on('changeReadyStates', message => this.ipcSend(ai, 'changeReadyStates', message))
+		gw.on('log', message => this.ipcSend(ai, 'log', message))
+		gw.on('updateSettings', message => {
+			this.ipcSend(ai, 'updateSettings', message)
+			if (message.key === 'canPutEverywhere') gw.send('ready', !message.value)
+		})
 		//#endregion
 
 		// どんな設定内容の対局でも受け入れる
