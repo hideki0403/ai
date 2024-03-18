@@ -17,9 +17,6 @@ master: example
 # ランダムにノートを投稿する機能
 notingEnabled: true
 
-# キーワードを覚える機能 (MeCab が必要)
-keywordEnabled: true
-
 # リバーシ機能
 reversiEnabled: true
 
@@ -36,6 +33,29 @@ timeSignalEnabled: true
 serverMonitoring: true
 
 # ----------------------------------------
+# キーワードの学習 / MeCab に関する設定
+# ----------------------------------------
+
+# キーワードを覚える機能 (MeCab が必要)
+keywordEnabled: true
+
+# キーワードを学習するタイムライン
+# home: ホームタイムライン
+# local: ローカルタイムライン
+# social: ソーシャルタイムライン
+# global: グローバルタイムライン
+learnKeywordTimeline: home
+
+# キーワードの学習をローカルのノートのみに限定するかどうか
+learnKeywordLocalOnly: false
+
+# MeCab のインストールパス (ソースからインストールした場合、大体は /usr/local/bin/mecab)
+mecab: /usr/local/bin/mecab
+
+# MeCab の辞書ファイルパス (オプション)
+mecabDic: null
+
+# ----------------------------------------
 # 新規絵文字の検出機能に関する設定
 # ----------------------------------------
 
@@ -49,16 +69,6 @@ newEmojiAnnouncementAtOnce: true
 # 新規絵文字の検出機能を無効にする絵文字カテゴリー
 # カンマ区切りで複数指定可能です。例: カスタム文字,自動生成,テスト
 ignoreCategory: カスタム文字
-
-# ----------------------------------------
-# MeCab に関する設定
-# ----------------------------------------
-
-# MeCab のインストールパス (ソースからインストールした場合、大体は /usr/local/bin/mecab)
-mecab: /usr/local/bin/mecab
-
-# MeCab の辞書ファイルパス (オプション)
-mecabDic: null
 
 # ----------------------------------------
 # WatchDog に関する設定

@@ -1,3 +1,4 @@
+import { Endpoints } from 'misskey-js';
 import { bindThis } from '@/decorators.js';
 import loki from 'lokijs';
 import Module from '@/module.js';
@@ -35,16 +36,35 @@ export default class extends Module {
 
 	@bindThis
 	private async learn() {
-		const tl = await this.aira.api('notes/timeline', {
+		let endpoint: keyof Endpoints = 'notes/timeline'
+
+		switch (config.learnKeywordTimeline) {
+			case 'home':
+				endpoint = 'notes/timeline'
+				break
+			case 'local':
+				endpoint = 'notes/local-timeline'
+				break
+			case 'social':
+				endpoint = 'notes/hybrid-timeline'
+				break
+			case 'global':
+				endpoint = 'notes/global-timeline'
+				break
+		}
+
+		const tl = await this.aira.api(endpoint as 'notes/timeline', {
 			limit: 30
 		})
 
-		const interestedNotes = tl.filter(note =>
+		let interestedNotes = tl.filter(note =>
 			note.userId !== this.aira.account.id &&
 			note.text != null &&
 			note.cw == null &&
 			note.visibility === 'public'
 		)
+
+		if (config.learnKeywordLocalOnly) interestedNotes = interestedNotes.filter(note => note.user.host === null)
 
 		let keywords: string[][] = []
 

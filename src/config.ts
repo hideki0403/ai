@@ -3,7 +3,7 @@ import * as yaml from 'js-yaml'
 import rootPath from 'app-root-path'
 
 const config = yaml.load(fs.readFileSync(rootPath.resolve('config.yaml'), 'utf8')) as Config
-const packageJson = require(rootPath.resolve('package.json')) as { version: string }
+const packageJson = JSON.parse(fs.readFileSync(rootPath.resolve('package.json'), 'utf8'))
 
 config.version = packageJson.version
 
@@ -13,6 +13,8 @@ type Config = {
 	token: string,
 	master?: string,
 	keywordEnabled: boolean,
+	learnKeywordTimeline: string,
+	learnKeywordLocalOnly: boolean,
 	reversiEnabled: boolean,
 	notingEnabled: boolean,
 	chartEnabled: boolean,
