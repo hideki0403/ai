@@ -411,7 +411,7 @@ class Session {
 	 * 対局が始まったことをMisskeyに投稿します
 	 */
 	private postGameStarted = async () => {
-		return await this.post(`${serifs.reversi.started(this.userName, this.strength.toString()) }\n→[観戦する](${this.url})`);
+		return await this.post(`${serifs.reversi.started(this.userName, this.strength.toString()) }\n→[観戦する](${this.url})`, undefined, true);
 	}
 
 	private ipcSend = (body: IPCTypes['child']) => {
