@@ -30,6 +30,7 @@ import SleepReportModule from '@/modules/sleep-report/index.js'
 import NotingModule from '@/modules/noting/index.js'
 import PollModule from '@/modules/poll/index.js'
 import ReminderModule from '@/modules/reminder/index.js'
+import ReversiModule from '@/modules/reversi/index.js'
 
 console.log(chalk.green(`
  _____ _            _____ _____ 
@@ -72,4 +73,5 @@ new Aira([
 	new NotingModule(),
 	new PollModule(),
 	new ReminderModule(),
+	new ReversiModule(),
 ])

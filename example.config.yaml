@@ -20,6 +20,9 @@ notingEnabled: true
 # キーワードを覚える機能 (MeCab が必要)
 keywordEnabled: true
 
+# リバーシ機能
+reversiEnabled: true
+
 # チャート機能
 chartEnabled: true
 
