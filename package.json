@@ -1,5 +1,5 @@
 {
-	"version": "1.4.0",
+	"version": "1.4.1",
 	"type": "module",
 	"main": "./built/index.js",
 	"scripts": {
@@ -12,8 +12,8 @@
 	},
 	"dependencies": {
 		"@hideki0403/emoji.js": "1.1.0",
+		"@napi-rs/canvas": "0.1.51",
 		"app-root-path": "3.1.0",
-		"canvas": "2.11.2",
 		"chalk": "5.3.0",
 		"chroma-js": "2.4.2",
 		"dayjs": "1.11.10",
