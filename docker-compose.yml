@@ -1,11 +1,11 @@
 version: '3'
 services:
   app:
+    image: ghcr.io/hideki0403/aira:latest
     build:
       context: .
       args:
         - enable_mecab=1
-    platform: linux/amd64
     volumes:
       - './config.yaml:/aira/config.yaml:ro'
       - './fonts:/aira/fonts:ro'
