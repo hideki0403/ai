@@ -1,25 +1,22 @@
 // Aira CORE
 
-import * as fs from 'fs'
-import autobind from 'autobind-decorator'
-import Loki from 'lokijs'
-import pico from 'picocolors'
-import { createColorize } from 'colorize-template'
-import { v4 as uuid } from 'uuid'
-import * as Misskey from 'misskey-js'
-import ws from 'ws'
-import fetch from 'node-fetch'
-import FormData from 'form-data'
-import promiseRetry from 'promise-retry'
+import * as fs from 'fs';
+import * as Misskey from 'misskey-js';
+import { bindThis } from '@/decorators.js';
+import Loki from 'lokijs';
+import got from 'got';
+import ws from 'ws';
+import { FormData, File } from 'formdata-node';
+import chalk from 'chalk';
+import { v4 as uuid } from 'uuid';
 
-import config from '@/config'
-import Module from '@/module'
-import Message from '@/message'
-import Friend, { FriendDoc } from '@/friend'
-import log from '@/utils/log'
-import delay from '@/utils/delay'
-
-const colorize = createColorize(pico)
+import config from '@/config.js';
+import Module from '@/module.js';
+import Message from '@/message.js';
+import Friend, { FriendDoc } from '@/friend.js';
+import log from '@/utils/log.js';
+import { sleep } from '@/utils/sleep.js';
+import promiseRetry from 'promise-retry';
 
 type MentionHook = (msg: Message) => Promise<boolean | HandlerResult>
 type ContextHook = (key: any, msg: Message, data?: any) => Promise<void | boolean | HandlerResult>
@@ -46,7 +43,7 @@ export type Meta = {
  */
 export default class Aira {
 	public readonly version = config.version
-	public account!: Misskey.entities.User
+	public account!: Misskey.entities.UserDetailed
 	public modules: Module[] = []
 	private mentionHooks: MentionHook[] = []
 	private contextHooks: { [moduleName: string]: ContextHook } = {}
@@ -92,28 +89,28 @@ export default class Aira {
 		})
 
 		// this.api = api.request にするとrequest内のthisがAPIClientではなくAiraを指してしまうのでこのような形にする
-		this.api = (...args) => api.request(...args)
+		this.api = (...args: Parameters<typeof api.request>) => api.request(...args)
 		this.stream = new Misskey.Stream(config.host, { token: config.token }, { WebSocket: ws })
 
 		this.initialize()
 	}
 
-	@autobind
+	@bindThis
 	private async initialize() {
 		const account = await promiseRetry(retry => {
-			log(`Account fetching... ${pico.gray(config.host)}`)
-			return this.api('i').catch(retry)
+			log(`Account fetching... ${chalk.gray(config.host)}`)
+			return this.api('i', {}).catch(retry)
 		}, {
 			retries: 3
 		}).catch(() => {
-			log(pico.red('Failed to fetch the account'))
+			log(chalk.red('Failed to fetch the account'))
 		})
 
 		// アカウントの取得に失敗したら終了
 		if (!account) return process.exit(1)
 
 		this.account = account
-		log(pico.green(`Account fetched successfully: ${pico.underline(`@${account.username}`)}`))
+		log(chalk.green(`Account fetched successfully: ${chalk.underline(`@${account.username}`)}`))
 
 		const memoryDir = config.memoryDir ?? '.'
 		const file = process.env.NODE_ENV === 'test' ? `${memoryDir}/test.memory.json` : `${memoryDir}/memory.json`
@@ -126,9 +123,9 @@ export default class Aira {
 			autosaveInterval: 1000,
 			autoloadCallback: err => {
 				// 読み込みに失敗したら終了
-				if (err) return this.log(pico.red(`Failed to load the memory: ${err}`))
+				if (err) return this.log(chalk.red(`Failed to load the memory: ${err}`))
 
-				this.log(pico.green('The memory loaded successfully'))
+				this.log(chalk.green('The memory loaded successfully'))
 				this.run()
 			}
 		})
@@ -143,7 +140,7 @@ export default class Aira {
 
 			setInterval(() => {
 				this.watchDogTimer = setTimeout(() => {
-					this.log(pico.red('Websocket connection is dead. Restarting...'))
+					this.log(chalk.red('Websocket connection is dead. Restarting...'))
 					process.exit(1)
 				}, config.watchDogTimeout ?? 30000)
 				this.stream.send('ping', null)
@@ -151,12 +148,12 @@ export default class Aira {
 		}
 	}
 
-	@autobind
+	@bindThis
 	public log(msg: string) {
-		log(colorize`[{magenta AiraOS}]: ${msg}`)
+		log(`[${chalk.magenta('AiraOS')}]: ${msg}`);
 	}
 
-	@autobind
+	@bindThis
 	private run() {
 		//#region Init DB
 		this.meta = this.getCollection('meta', {})
@@ -215,12 +212,6 @@ export default class Aira {
 			})
 		})
 
-		// メッセージ
-		mainStream.on('messagingMessage', data => {
-			if (data.userId == this.account.id) return; // 自分は弾く
-			this.onReceiveMessage(new Message(this, data));
-		});
-
 		// 通知
 		mainStream.on('notification', data => {
 			this.onNotification(data)
@@ -229,7 +220,7 @@ export default class Aira {
 
 		// Install modules
 		this.modules.forEach(m => {
-			this.log(`Installing ${pico.cyan(pico.italic(m.name))}\tmodule...`)
+			this.log(`Installing ${chalk.cyan(chalk.italic(m.name))}\tmodule...`)
 			m.init(this)
 			const res = m.install()
 			if (res != null) {
@@ -244,16 +235,17 @@ export default class Aira {
 		setInterval(this.crawleTimer, 1000)
 		setInterval(this.logWaking, 10000)
 
-		this.log(pico.green(pico.bold('Aira am now running!')))
+		this.log(chalk.green(chalk.bold('Aira am now running!')))
 	}
 
 	/**
 	 * ユーザーから話しかけられたとき
 	 * (メンション、リプライ、トークのメッセージ)
 	 */
-	@autobind
+	@bindThis
 	private async onReceiveMessage(msg: Message): Promise<void> {
-		this.log(pico.gray(`<<< An message received: ${pico.underline(msg.id)}`))
+		this.log(chalk.gray(`<<< An message received: ${chalk.underline(msg.id)}`))
+
 
 		// Ignore message if the user is a bot
 		// To avoid infinity reply loop.
@@ -304,7 +296,7 @@ export default class Aira {
 		//#endregion
 
 		if (!immediate) {
-			await delay(1000)
+			await sleep(1000);
 		}
 
 		// リアクションする
@@ -316,7 +308,7 @@ export default class Aira {
 		}
 	}
 
-	@autobind
+	@bindThis
 	private onNotification(notification: Misskey.entities.Notification) {
 		switch (notification.type) {
 			// リアクションされたら親愛度を少し上げる
@@ -329,7 +321,7 @@ export default class Aira {
 		}
 	}
 
-	@autobind
+	@bindThis
 	private crawleTimer() {
 		const timers = this.timers.find()
 		for (const timer of timers) {
@@ -342,7 +334,7 @@ export default class Aira {
 		}
 	}
 
-	@autobind
+	@bindThis
 	private logWaking() {
 		this.setMeta({
 			lastWakingAt: Date.now(),
@@ -352,9 +344,9 @@ export default class Aira {
 	/**
 	 * データベースのコレクションを取得します
 	 */
-	@autobind
+	@bindThis
 	public getCollection(name: string, opts?: any): Loki.Collection {
-		let collection: Loki.Collection
+		let collection: Loki.Collection;
 
 		collection = this.db.getCollection(name)
 
@@ -365,7 +357,7 @@ export default class Aira {
 		return collection
 	}
 
-	@autobind
+	@bindThis
 	public lookupFriend(userId: Misskey.entities.User['id']): Friend | null {
 		const doc = this.friends.findOne({
 			userId: userId
@@ -378,24 +370,25 @@ export default class Aira {
 	/**
 	 * ファイルをドライブにアップロードします
 	 */
-	@autobind
-	public async upload(file: Buffer | fs.ReadStream, meta: any) {
-		const formData = new FormData()
-		formData.append('i', config.token)
-		formData.append('file', file, meta)
+	@bindThis
+	public async upload(file: Buffer | fs.ReadStream, meta: { filename: string, contentType: string }) {
+		const form = new FormData();
+		form.set('i', config.token);
+		form.set('file', new File([file], meta.filename, { type: meta.contentType }));
 
-		const res = await fetch(`${config.host}/api/drive/files/create`, {
-			method: 'POST',
-			body: formData
-		})
-		return await res.json() as Misskey.entities.DriveFile
+		const res = await got.post({
+			url: `${config.host}/api/drive/files/create`,
+			body: form
+		}).json();
+
+		return res as Misskey.entities.DriveFile;
 	}
 
 	/**
 	 * 投稿します
 	 */
-	@autobind
-	public async post(param: any) {
+	@bindThis
+	public async post(param: Misskey.Endpoints['notes/create']['req']) {
 		const res = await this.api('notes/create', param)
 		return res.createdNote
 	}
@@ -403,11 +396,12 @@ export default class Aira {
 	/**
 	 * 指定ユーザーにトークメッセージを送信します
 	 */
-	@autobind
+	@bindThis
 	public sendMessage(userId: any, param: any) {
-		return this.api('messaging/messages/create', Object.assign({
-			userId: userId,
-		}, param))
+		return this.post(Object.assign({
+			visibility: 'specified',
+			visibleUserIds: [userId],
+		}, param));
 	}
 
 	/**
@@ -417,7 +411,7 @@ export default class Aira {
 	 * @param id トークメッセージ上のコンテキストならばトーク相手のID、そうでないなら待ち受ける投稿のID
 	 * @param data コンテキストに保存するオプションのデータ
 	 */
-	@autobind
+	@bindThis
 	public subscribeReply(module: Module, key: string | null, id: string, data?: any) {
 		this.contexts.insertOne({
 			noteId: id,
@@ -432,7 +426,7 @@ export default class Aira {
 	 * @param module 解除するモジュール名
 	 * @param key コンテキストを識別するためのキー
 	 */
-	@autobind
+	@bindThis
 	public unsubscribeReply(module: Module, key: string | null) {
 		this.contexts.findAndRemove({
 			key: key,
@@ -447,7 +441,7 @@ export default class Aira {
 	 * @param delay ミリ秒
 	 * @param data オプションのデータ
 	 */
-	@autobind
+	@bindThis
 	public setTimeoutWithPersistence(module: Module, delay: number, data?: any) {
 		const id = uuid()
 		this.timers.insertOne({
@@ -461,7 +455,7 @@ export default class Aira {
 		this.log(`Timer persisted: ${module.name} ${id} ${delay}ms`)
 	}
 
-	@autobind
+	@bindThis
 	public getMeta() {
 		const rec = this.meta.findOne()
 
@@ -477,7 +471,7 @@ export default class Aira {
 		}
 	}
 
-	@autobind
+	@bindThis
 	public setMeta(meta: Partial<Meta>) {
 		const rec = this.getMeta()
 

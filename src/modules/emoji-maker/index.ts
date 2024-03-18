@@ -1,24 +1,24 @@
-import autobind from 'autobind-decorator'
+import { bindThis } from '@/decorators.js';
 import kuroshiro from 'kuroshiro'
-import Misskey from 'misskey-js'
+import * as Misskey from 'misskey-js'
 import * as mfm from 'mfm-js'
-import Module from '@/module'
-import Message from '@/message'
-import serifs from '@/serifs'
-import { mecab } from '@/utils/mecab'
-import { renderEmoji } from './render-emoji'
+import Module from '@/module.js'
+import Message from '@/message.js'
+import serifs from '@/serifs.js'
+import { mecab } from '@/utils/mecab.js'
+import { renderEmoji } from './render-emoji.js'
 
 export default class extends Module {
 	public readonly name = 'emoji-maker'
 
-	@autobind
+	@bindThis
 	public install() {
 		return {
 			mentionHook: this.mentionHook
 		}
 	}
 
-	@autobind
+	@bindThis
 	private async mentionHook(msg: Message): Promise<boolean> {
 		if (!msg.includes(['絵文字', 'emoji'])) return false
 
@@ -29,13 +29,13 @@ export default class extends Module {
 
 		// 絵文字の削除処理
 		if (msg.includes(['削除', '消して'])) {
-			this.removeEmoji(msg, referNote.text as string, referNote.user.username)
+			this.removeEmoji(msg, referNote.text!, referNote.user.username)
 			return true
 		}
 
 		// オプションのパース
 		const args = referNote.text!.replace(/ +/g, ' ').split(' ')
-		const options = {} as { [key: string]: string }
+		const options = {} as Record<string, string>
 
 		for (let i = 0; i < args.length; i++) {
 			const arg = args[i]
@@ -72,7 +72,7 @@ export default class extends Module {
 			// 既に対象の絵文字が登録されていないかチェック
 			const existsCheck = (await this.aira.api('admin/emoji/list', {
 				query: emojiName
-			}))?.some((emoji: Misskey.entities.CustomEmoji) => emoji.name === emojiName)
+			}))?.some((emoji: Misskey.entities.EmojiSimple) => emoji.name === emojiName)
 
 			if (existsCheck) {
 				msg.reply(serifs.emojiMaker.exists(emojiName))
@@ -119,16 +119,16 @@ export default class extends Module {
 		return true
 	}
 
-	@autobind
+	@bindThis
 	private async removeEmoji(msg: Message, text: string, author: string): Promise<void> {
 		const emojis = mfm.parseSimple(text).filter(node => node.type === 'emojiCode').map(node => (node as mfm.MfmEmojiCode).props.name)
-		const result = {} as {[key: string]: boolean}
+		const result = {} as Record<string, boolean>
 		
 		for (const emoji of emojis) {
 			const remoteEmojis = await this.aira.api('admin/emoji/list', {
 				query: emoji,
 				limit: 1
-			}) as Misskey.entities.CustomEmoji[]
+			})
 
 			const target = remoteEmojis.find((item: any) => item.name === emoji && item.license.split(',').includes(author))
 			
@@ -137,7 +137,7 @@ export default class extends Module {
 				continue
 			}
 
-			await this.aira.api('admin/emoji/delete' as any, {
+			await this.aira.api('admin/emoji/delete', {
 				id: target.id
 			})
 

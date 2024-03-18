@@ -168,6 +168,41 @@ export default {
 	},
 
 	/**
+	 * リバーシ
+	 */
+	reversi: {
+		/**
+		 * リバーシへの誘いを承諾するとき
+		 */
+		ok: '良いよっ！',
+
+		/**
+		 * リバーシへの誘いを断るとき
+		 */
+		decline: 'ごめんね、今はリバーシできないの...',
+
+		/**
+		 * 対局開始
+		 */
+		started: (name: mixedString, strength: mixedString) => `${name}と対局を始めたよ！ (強さ${strength})`,
+
+		/**
+		 * 勝ったとき
+		 */
+		iWon: (name: mixedString) => `${name}に勝てた！`,
+
+		/**
+		 * 負けたとき
+		 */
+		iLose: (name: mixedString) => `${name}に負けちゃった...`,
+
+		/**
+		 * 引き分けたとき
+		 */
+		drawn: (name: mixedString) => `${name}と引き分けだった～`,
+	},
+
+	/**
 	 * 数当てゲーム
 	 */
 	guessingGame: {
@@ -268,7 +303,8 @@ export default {
 	 * 新規絵文字通知
 	 */
 	newEmojiDetector: {
-		notify: (emoji: string) => `新しい絵文字が追加されたみたい！\n$[x2 :${emoji}:] (\`:${emoji}:\`)`
+		notify: (emoji: string) => `新しい絵文字が追加されたみたい！\n$[x2 :${emoji}:] (\`:${emoji}:\`)`,
+		bulkNotify: (emojis: string[]) => `新しい絵文字が追加されたみたい！\n\n${emojis.map(emoji => `$[x2 :${emoji}:] (\`:${emoji}:\`)`).join('\n')}`
 	},
 
 	/**
@@ -344,6 +380,13 @@ export default {
 	chart: {
 		post: 'インスタンスの投稿数！',
 		foryou: '描いたよ！'
+	},
+
+	checkCustomEmojis: {
+		post: (server_name, num) => `${server_name}に${num}件の絵文字が追加されました！`,
+		emojiPost: emoji => `:${emoji}:\n(\`${emoji}\`) #AddCustomEmojis`,
+		postOnce: (server_name, num, text) => `${server_name}に${num}件の絵文字が追加されました！\n${text} #AddCustomEmojis`,
+		emojiOnce: emoji => `:${emoji}:(\`${emoji}\`)`
 	},
 
 	sleepReport: {

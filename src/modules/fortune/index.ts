@@ -1,9 +1,9 @@
-import autobind from 'autobind-decorator'
-import Module from '@/module'
-import Message from '@/message'
-import serifs from '@/serifs'
-import { xorshift7 as seedrandom } from 'seedrandom'
-import { genItem } from '@/vocabulary'
+import { bindThis } from '@/decorators.js';
+import Module from '@/module.js';
+import Message from '@/message.js';
+import serifs from '@/serifs.js';
+import seedrandom from 'seedrandom';
+import { genItem } from '@/vocabulary.js';
 
 export const blessing = [
 	'ヨタ吉',
@@ -39,14 +39,14 @@ export const blessing = [
 export default class extends Module {
 	public readonly name = 'fortune'
 
-	@autobind
+	@bindThis
 	public install() {
 		return {
 			mentionHook: this.mentionHook
 		}
 	}
 
-	@autobind
+	@bindThis
 	private async mentionHook(msg: Message) {
 		if (msg.includes(['占', 'うらな', '運勢', 'おみくじ'])) {
 			const date = new Date()

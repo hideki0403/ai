@@ -1,37 +1,38 @@
 // AiraOS bootstrapper
-import pico from 'picocolors'
+import chalk from 'chalk'
 
-import Aira from './aira'
-import config from './config'
-import _log from './utils/log'
+import Aira from '@/aira.js'
+import config from '@/config.js'
+import _log from '@/utils/log.js'
 
-import CoreModule from './modules/core'
-import TalkModule from './modules/talk'
-import BirthdayModule from './modules/birthday'
-import PingModule from './modules/ping'
-import EmojiMakerModule from './modules/emoji-maker'
-import EmojiModule from './modules/emoji'
-import EmojiReactModule from './modules/emoji-react'
-import NewEmojiDetectorModule from './modules/new-emoji-detector'
-import FortuneModule from './modules/fortune'
-import GuessingGameModule from './modules/guessing-game'
-import KazutoriModule from './modules/kazutori'
-import KeywordModule from './modules/keyword'
-import WelcomeModule from './modules/welcome'
-import TimerModule from './modules/timer'
-import TimeSignalModule from './modules/time-signal'
-import DiceModule from './modules/dice'
-import ServerModule from './modules/server'
-import FollowModule from './modules/follow'
-import ValentineModule from './modules/valentine'
-import MazeModule from './modules/maze'
-import ChartModule from './modules/chart'
-import SleepReportModule from './modules/sleep-report'
-import NotingModule from './modules/noting'
-import PollModule from './modules/poll'
-import ReminderModule from './modules/reminder'
+import CoreModule from '@/modules/core/index.js'
+import TalkModule from '@/modules/talk/index.js'
+import BirthdayModule from '@/modules/birthday/index.js'
+import PingModule from '@/modules/ping/index.js'
+import EmojiMakerModule from '@/modules/emoji-maker/index.js'
+import EmojiModule from '@/modules/emoji/index.js'
+import EmojiReactModule from '@/modules/emoji-react/index.js'
+import NewEmojiDetectorModule from '@/modules/new-emoji-detector/index.js'
+import FortuneModule from '@/modules/fortune/index.js'
+import GuessingGameModule from '@/modules/guessing-game/index.js'
+import KazutoriModule from '@/modules/kazutori/index.js'
+import KeywordModule from '@/modules/keyword/index.js'
+import WelcomeModule from '@/modules/welcome/index.js'
+import TimerModule from '@/modules/timer/index.js'
+import TimeSignalModule from '@/modules/time-signal/index.js'
+import DiceModule from '@/modules/dice/index.js'
+import ServerModule from '@/modules/server/index.js'
+import FollowModule from '@/modules/follow/index.js'
+import ValentineModule from '@/modules/valentine/index.js'
+import MazeModule from '@/modules/maze/index.js'
+import ChartModule from '@/modules/chart/index.js'
+import SleepReportModule from '@/modules/sleep-report/index.js'
+import NotingModule from '@/modules/noting/index.js'
+import PollModule from '@/modules/poll/index.js'
+import ReminderModule from '@/modules/reminder/index.js'
+import ReversiModule from '@/modules/reversi/index.js'
 
-console.log(pico.green(`
+console.log(chalk.green(`
  _____ _            _____ _____ 
 |  _  |_|___ ___   |     |   __|
 |     | |  _| .'|  |  |  |__   |
@@ -42,7 +43,7 @@ function log(msg: string): void {
 	_log(`[Boot]: ${msg}`)
 }
 
-log(pico.bold(`Aira v${config.version}`))
+log(chalk.bold(`Aira v${config.version}`))
 log('Starting AiraOS...')
 
 // あいらを起動
@@ -72,4 +73,5 @@ new Aira([
 	new NotingModule(),
 	new PollModule(),
 	new ReminderModule(),
+	new ReversiModule(),
 ])

@@ -1,11 +1,11 @@
-import autobind from 'autobind-decorator'
+import { bindThis } from '@/decorators.js';
 import cron from 'node-cron'
 import dayjs from 'dayjs'
-import 'dayjs/locale/ja'
-import isLeapYear from 'dayjs/plugin/isLeapYear'
-import Module from '@/module'
-import serifs from '@/serifs'
-import config from '@/config'
+import 'dayjs/locale/ja.js'
+import isLeapYear from 'dayjs/plugin/isLeapYear.js'
+import Module from '@/module.js'
+import serifs from '@/serifs.js'
+import config from '@/config.js'
 
 dayjs.locale('ja')
 dayjs.extend(isLeapYear)
@@ -13,7 +13,7 @@ dayjs.extend(isLeapYear)
 export default class extends Module {
 	public readonly name = 'time-signal'
 
-	@autobind
+	@bindThis
 	public install() {
 		if (config.timeSignalEnabled === false) return {}
 
@@ -22,7 +22,7 @@ export default class extends Module {
 		return {}
 	}
 
-	@autobind
+	@bindThis
 	private async post() {
 		const today = dayjs().format('YYYY年 M月 D日 (ddd)')
 		const baseDays = dayjs().isLeapYear() ? 366 : 365

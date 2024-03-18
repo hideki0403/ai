@@ -1,13 +1,13 @@
-import autobind from 'autobind-decorator'
-import Module from '@/module'
-import Friend from '@/friend'
-import serifs from '@/serifs'
-import zeroPadding from '@/utils/zero-padding'
+import { bindThis } from '@/decorators.js';
+import Module from '@/module.js';
+import Friend from '@/friend.js';
+import serifs from '@/serifs.js';
+import zeroPadding from '@/utils/zero-padding.js';
 
 export default class extends Module {
 	public readonly name = 'birthday'
 
-	@autobind
+	@bindThis
 	public install() {
 		this.crawleBirthday()
 		setInterval(this.crawleBirthday, 1000 * 60 * 3)
@@ -18,7 +18,7 @@ export default class extends Module {
 	/**
 	 * 誕生日のユーザーがいないかチェック(いたら祝う)
 	 */
-	@autobind
+	@bindThis
 	private crawleBirthday() {
 		const now = new Date()
 		const m = now.getMonth()

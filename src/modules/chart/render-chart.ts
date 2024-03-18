@@ -1,4 +1,4 @@
-import fonts from '@/utils/fonts'
+import fonts from '@/utils/fonts.js'
 import { createCanvas, registerFont } from 'canvas'
 
 const width = 1024 + 256

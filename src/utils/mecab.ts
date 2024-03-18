@@ -3,7 +3,7 @@ import * as util from 'util'
 import * as stream from 'stream'
 import * as memoryStreams from 'memory-streams'
 import { EOL } from 'os'
-import config from '@/config'
+import config from '@/config.js'
 
 const pipeline = util.promisify(stream.pipeline)
 

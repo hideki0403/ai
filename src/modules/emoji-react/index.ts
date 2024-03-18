@@ -1,17 +1,17 @@
-import autobind from 'autobind-decorator'
-import { parse } from 'twemoji-parser'
-import Misskey from 'misskey-js'
+import { bindThis } from '@/decorators.js';
+import { parse } from 'twemoji-parser';
+import * as Misskey from 'misskey-js';
 
-import Module from '@/module'
-import includes from '@/utils/includes'
-import delay from '@/utils/delay'
+import Module from '@/module.js';
+import includes from '@/utils/includes.js';
+import { sleep } from '@/utils/sleep.js';
 
 export default class extends Module {
 	public readonly name = 'emoji-react'
 
 	private htl!: Misskey.ChannelConnection
 
-	@autobind
+	@bindThis
 	public install() {
 		this.htl = this.aira.stream.useChannel('homeTimeline')
 		this.htl.on('note', this.onNote)
@@ -19,16 +19,15 @@ export default class extends Module {
 		return {}
 	}
 
-	@autobind
+	@bindThis
 	private async onNote(note: Misskey.entities.Note) {
-		if (note.reply != null) return
-		if (note.text == null) return
-		if (note.text.includes('@')) return // (自分または他人問わず)メンションっぽかったらreject
-		if (note.userId === this.aira.account.id) return
+		if (note.reply != null) return;
+		if (note.text == null) return;
+		if (note.text.includes('@')) return; // (自分または他人問わず)メンションっぽかったらreject
 
 		const react = async (reaction: string, immediate = false) => {
 			if (!immediate) {
-				await delay(1500)
+				await sleep(1500);
 			}
 			this.aira.api('notes/reactions/create', {
 				noteId: note.id,
