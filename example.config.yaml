@@ -43,6 +43,7 @@ serverMonitoring: true
 newEmojiDetectorEnabled: true
 
 # 検出した絵文字を一度にまとめて投稿するかどうか
+# この設定が有効になっている場合は、最後に絵文字が追加されてから3分後にまとめて投稿されるようになります。
 newEmojiAnnouncementAtOnce: true
 
 # 新規絵文字の検出機能を無効にする絵文字カテゴリー
