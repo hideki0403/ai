@@ -1,0 +1,76 @@
+name: Create Pull Request
+on:
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'target commit hash'
+        required: false
+        type: string
+  push:
+    branches:
+      - 'develop'
+    paths:
+      - 'package.json'
+
+jobs:
+  create-pr:
+    name: Create Pull Request
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+            fetch-depth: 0
+
+      - name: get package version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
+
+      - name: check tag exists
+        uses: mukunku/tag-exists-action@v1.4.0
+        id: check-tag
+        with:
+          tag: v${{ steps.package-version.outputs.current-version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: check pr exists
+        id: check-pr
+        run: |
+          echo "Checking PR exists"
+
+          echo "Using repository: ${{ github.repository }}"
+          gh repo set-default ${{ github.repository }}
+
+          VERSION=$(echo '${{ steps.package-version.outputs.current-version }}' | cut -d '-' -f 1)
+          COUNT=$(gh pr list -S 'release in:title' --json title --jq '.[].title' | grep $VERSION | wc -l)
+          if [ $((COUNT)) -gt 0 ]; then
+              echo "exists=true" >> $GITHUB_OUTPUT
+              echo "PR already exists"
+          else
+              echo "exists=false" >> $GITHUB_OUTPUT
+              echo "PR does not exist"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: create pull request
+        if: steps.check-tag.outputs.exists == 'false' && steps.check-pr.outputs.exists == 'false'
+        shell: bash
+        run: |
+          if [ -z "${{ inputs.tags }}" ]; then
+            TAG=$(git rev-parse HEAD)
+          fi
+
+          echo "Creating PR"
+          COMMAND_ARGS=(-B "master" -H "${{ github.ref_name }}" -t "release: v${{ steps.package-version.outputs.current-version }}" -b "Automated pr by github actions")
+
+          if git log "$TAG" -1 --pretty=%B | grep -E "^Merge tag '.+-(alpha|beta|rc).+'"; then
+            COMMAND_ARGS+=(--draft)
+          fi
+
+          gh pr create "${COMMAND_ARGS[@]}"
+
+          echo "PR created"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tags }}
