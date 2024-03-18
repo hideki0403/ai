@@ -1,20 +1,75 @@
 # これはあいらに関する設定ファイルです
 # このファイルを config.yaml としてコピーしてから設定を変更・保存してください。
 
-host: https://example.com # https:// + あなたのインスタンスのURL (末尾の / は除く)
-token: XXXXXXXXXXXXXXXXXX # あいらとして動かしたいアカウントのアクセストークン
-master: example # 管理者のユーザー名(オプション)
-notingEnabled: true # ランダムにノートを投稿する機能を無効にする場合は false を入れる
-keywordEnabled: true  # キーワードを覚える機能 (MeCab が必要) を有効にする場合は true を入れる (無効にする場合は false)
-chartEnabled: true # チャート機能を無効化する場合は false を入れてください
-mazeEnabled: true # 迷路機能を無効化する場合は false を入れてください
-timeSignalEnabled: true # 日付変更時のお知らせ機能を無効化する場合は false を入れてください
-newEmojiDetectorEnabled: true # 新規絵文字の検出機能を無効化する場合は false を入れてください
-ignoreCategory: カスタム文字 # 新規絵文字の検出機能を無効にする絵文字カテゴリーを指定します。カンマ区切りで複数指定可能です。例: カスタム文字,自動生成,テスト
-serverMonitoring: true # サーバー監視の機能を有効にする場合は true を入れる (無効にする場合は false)
-mecab: /usr/local/bin/mecab # MeCab のインストールパス (ソースからインストールした場合、大体は /usr/local/bin/mecab)
-mecabDic: null # MeCab の辞書ファイルパス (オプション)
+# https:// + あなたのインスタンスのURL (末尾の / は除く)
+host: https://example.com
+
+# あいらとして動かしたいアカウントのアクセストークン
+token: XXXXXXXXXXXXXXXXXX
+
+# 管理者のユーザー名(オプション)
+master: example
+
+# ----------------------------------------
+# あいらの機能に関する設定
+# ----------------------------------------
+
+# ランダムにノートを投稿する機能
+notingEnabled: true
+
+# キーワードを覚える機能 (MeCab が必要)
+keywordEnabled: true
+
+# チャート機能
+chartEnabled: true
+
+# 迷路機能
+mazeEnabled: true
+
+# 日付変更時のお知らせ機能
+timeSignalEnabled: true
+
+# サーバー監視機能
+serverMonitoring: true
+
+# ----------------------------------------
+# 新規絵文字の検出機能に関する設定
+# ----------------------------------------
+
+# 新規絵文字の検出機能
+newEmojiDetectorEnabled: true
+
+# 検出した絵文字を一度にまとめて投稿するかどうか
+newEmojiAnnouncementAtOnce: true
+
+# 新規絵文字の検出機能を無効にする絵文字カテゴリー
+# カンマ区切りで複数指定可能です。例: カスタム文字,自動生成,テスト
+ignoreCategory: カスタム文字
+
+# ----------------------------------------
+# MeCab に関する設定
+# ----------------------------------------
+
+# MeCab のインストールパス (ソースからインストールした場合、大体は /usr/local/bin/mecab)
+mecab: /usr/local/bin/mecab
+
+# MeCab の辞書ファイルパス (オプション)
+mecabDic: null
+
+# ----------------------------------------
+# WatchDog に関する設定
+# ----------------------------------------
+
+# Websocketの接続を監視する機能 (サーバーがWebsocketのping/pongに対応している必要があります)
+watchDog: false 
+
+# Websocketのpingを送信する間隔 (ミリ秒)
+watchDogInterval: 60000
+
+# Websocketのpongを受信できなかった場合に切断するまでの時間 (ミリ秒)
+watchDogTimeout: 30000
+
+# ----------------------------------------
+# その他の設定
+# ----------------------------------------
 memoryDir: ./ # memory.jsonの保存先（オプション、デフォルトは'./'（レポジトリのルートです））
-watchDog: false # Websocketの接続を監視する機能を有効にする場合は true を入れる (サーバーがWebsocketのping/pongに対応している必要があります)
-watchDogInterval: 60000 # Websocketのpingを送信する間隔 (ミリ秒)
-watchDogTimeout: 30000 # Websocketのpongを受信できなかった場合に切断するまでの時間 (ミリ秒)
