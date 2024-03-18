@@ -1,4 +1,5 @@
 import * as childProcess from 'child_process';
+import * as Misskey from 'misskey-js';
 import { bindThis } from '@/decorators.js';
 import Module from '@/module.js';
 import serifs from '@/serifs.js';
@@ -12,19 +13,54 @@ import { dirname, resolve } from 'node:path';
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
 
+type EventsToIPC<T> = {
+	[K in keyof T]: T[K] extends (...args: infer A) => void ? {
+		type: K;
+		body: A[number];
+	} : never;
+}[keyof T]
+
+export type IPCTypes = {
+	parent: {
+		type: '_init_',
+		body: {
+			game: any;
+			form: any;
+			account: any;
+		};
+	} | {
+		type: 'noteId',
+		body: {
+			noteId: string;
+		}
+	} | EventsToIPC<Misskey.Channels['reversiGame']['events']>,
+	child: {
+		type: 'putStone';
+		pos: number;
+		id: string;
+	} | {
+		type: 'ended';
+	} | {
+		type: 'postNote';
+		text: string;
+		renoteId?: string;
+		throwNoteId?: boolean;
+	}
+}
+
 export default class extends Module {
 	public readonly name = 'reversi';
 
 	/**
 	 * リバーシストリーム
 	 */
-	private reversiConnection?: any;
+	private reversiConnection?: Misskey.ChannelConnection<Misskey.Channels['reversi']>;
 
 	@bindThis
 	public install() {
 		if (!config.reversiEnabled) return {};
 
-		this.reversiConnection = this.ai.connection.useSharedConnection('reversi');
+		this.reversiConnection = this.aira.stream.useChannel('reversi');
 
 		// 招待されたとき
 		this.reversiConnection.on('invited', msg => this.onReversiInviteMe(msg.user));
@@ -33,10 +69,10 @@ export default class extends Module {
 		this.reversiConnection.on('matched', msg => this.onReversiGameStart(msg.game));
 
 		if (config.reversiEnabled) {
-			const mainStream = this.ai.connection.useSharedConnection('main');
+			const mainStream = this.aira.stream.useChannel('main');
 			mainStream.on('pageEvent', msg => {
 				if (msg.event === 'inviteReversi') {
-					this.ai.api('games/reversi/match', {
+					this.aira.api('reversi/match', {
 						userId: msg.user.id
 					});
 				}
@@ -58,7 +94,7 @@ export default class extends Module {
 					msg.friend.updateReversiStrength(0);
 				}
 
-				this.ai.api('reversi/match', {
+				this.aira.api('reversi/match', {
 					userId: msg.userId
 				});
 			} else {
@@ -77,7 +113,7 @@ export default class extends Module {
 
 		if (config.reversiEnabled) {
 			// 承認
-			const game = await this.ai.api('reversi/match', {
+			const game = await this.aira.api('reversi/match', {
 				userId: inviter.id
 			});
 
@@ -90,7 +126,7 @@ export default class extends Module {
 	@bindThis
 	private onReversiGameStart(game: any) {
 		let strength = 4;
-		const friend = this.ai.lookupFriend(game.user1Id !== this.ai.account.id ? game.user1Id : game.user2Id)!;
+		const friend = this.aira.lookupFriend(game.user1Id !== this.aira.account.id ? game.user1Id : game.user2Id)!;
 		if (friend != null) {
 			strength = friend.doc.reversiStrength ?? 4;
 			friend.updateReversiStrength(null);
@@ -99,7 +135,7 @@ export default class extends Module {
 		this.log(`enter reversi game room: ${game.id}`);
 
 		// ゲームストリームに接続
-		const gw = this.ai.connection.connectToChannel('reversiGame', {
+		const gw = this.aira.stream.useChannel('reversiGame', {
 			gameId: game.id
 		});
 
@@ -107,7 +143,7 @@ export default class extends Module {
 		const form = [{
 			id: 'publish',
 			type: 'switch',
-			label: '藍が対局情報を投稿するのを許可',
+			label: 'あいらが対局情報を投稿するのを許可する',
 			value: true,
 		}, {
 			id: 'strength',
@@ -136,16 +172,13 @@ export default class extends Module {
 		const ai = childProcess.fork(_dirname + '/back.js');
 
 		// バックエンドプロセスに情報を渡す
-		ai.send({
-			type: '_init_',
-			body: {
-				game: game,
-				form: form,
-				account: this.ai.account
-			}
+		this.ipcSend(ai, '_init_', {
+			game: game,
+			form: form,
+			account: this.aira.account
 		});
 
-		ai.on('message', (msg: Record<string, any>) => {
+		ai.on('message', (msg: IPCTypes['child']) => {
 			if (msg.type == 'putStone') {
 				gw.send('putStone', {
 					pos: msg.pos,
@@ -155,11 +188,26 @@ export default class extends Module {
 				gw.dispose();
 
 				this.onGameEnded(game);
+			} else if (msg.type == 'postNote') {
+				this.aira.api('notes/create', {
+					text: msg.text,
+					renoteId: msg.renoteId,
+					visibility: 'home',
+				}).catch(e => {
+					console.error(e);
+					return null;
+				}).then(note => {
+					if (note != null && msg.throwNoteId) {
+						this.ipcSend(ai, 'noteId', {
+							noteId: note.createdNote.id
+						});
+					}
+				});
 			}
 		});
 
 		// ゲームストリームから情報が流れてきたらそのままバックエンドプロセスに伝える
-		gw.addListener('*', message => {
+		gw.addListener('*' as any, message => {
 			ai.send(message);
 
 			if (message.type === 'updateSettings') {
@@ -181,13 +229,18 @@ export default class extends Module {
 	}
 
 	@bindThis
+	private ipcSend<T extends IPCTypes['parent']['type']>(ai: childProcess.ChildProcess, type: T, body: Extract<IPCTypes['parent'], { type: T }>['body']) {
+		ai.send({ type, body });
+	}
+
+	@bindThis
 	private onGameEnded(game: any) {
-		const user = game.user1Id == this.ai.account.id ? game.user2 : game.user1;
+		const user = game.user1Id == this.aira.account.id ? game.user2 : game.user1;
 
 		//#region 1日に1回だけ親愛度を上げる
 		const today = getDate();
 
-		const friend = new Friend(this.ai, { user: user });
+		const friend = new Friend(this.aira, { user: user });
 
 		const data = friend.getPerModulesData(this);
 

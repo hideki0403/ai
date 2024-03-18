@@ -6,13 +6,13 @@
  * 切断されてしまうので、別々のプロセスで行うようにします
  */
 
-import got from 'got';
+import * as Misskey from 'misskey-js';
 import * as Reversi from './engine.js';
+import type { IPCTypes } from './index.js';
 import config from '@/config.js';
 import serifs from '@/serifs.js';
-import type { User } from '@/misskey/user.js';
 
-function getUserName(user) {
+function getUserName(user: Misskey.entities.User) {
 	return user.name || user.username;
 }
 
@@ -24,11 +24,11 @@ const titles = [
 ];
 
 class Session {
-	private account: User;
+	private account!: Misskey.entities.User;
 	private game: any;
 	private form: any;
-	private engine: Reversi.Game;
-	private botColor: Reversi.Color;
+	private engine!: Reversi.Game;
+	private botColor!: Reversi.Color;
 
 	private appliedOps: string[] = [];
 
@@ -55,9 +55,9 @@ class Session {
 	/**
 	 * 対局が開始したことを知らせた投稿
 	 */
-	private startedNote: any = null;
+	private startedNoteId: Misskey.entities.Note['id'] | undefined;
 
-	private get user(): User {
+	private get user(): Misskey.entities.User {
 		return this.game.user1Id == this.account.id ? this.game.user2 : this.game.user1;
 	}
 
@@ -87,12 +87,13 @@ class Session {
 		process.on('message', this.onMessage);
 	}
 
-	private onMessage = async (msg: any) => {
+	private onMessage = async (msg: IPCTypes['parent']) => {
 		switch (msg.type) {
 			case '_init_': this.onInit(msg.body); break;
 			case 'started': this.onStarted(msg.body); break;
 			case 'ended': this.onEnded(msg.body); break;
 			case 'log': this.onLog(msg.body); break;
+			case 'noteId': this.startedNoteId = msg.body.noteId; break;
 		}
 	}
 
@@ -109,16 +110,14 @@ class Session {
 	private onStarted = (msg: any) =>  {
 		this.game = msg.game;
 		if (this.game.canPutEverywhere) { // 対応してない
-			process.send!({
+			this.ipcSend({
 				type: 'ended'
 			});
 			process.exit();
 		}
 
 		// TLに投稿する
-		this.postGameStarted().then(note => {
-			this.startedNote = note;
-		});
+		this.postGameStarted();
 
 		// リバーシエンジン初期化
 		this.engine = new Reversi.Game(this.game.map, {
@@ -210,41 +209,25 @@ class Session {
 	 */
 	private onEnded = async (msg: any) =>  {
 		// ストリームから切断
-		process.send!({
+		this.ipcSend({
 			type: 'ended'
 		});
 
-		let text: string;
+		if (!msg.game.surrendered) {
+			let text: string;
 
-		if (msg.game.surrendered) {
-			if (this.isSettai) {
-				text = serifs.reversi.settaiButYouSurrendered(this.userName);
-			} else {
-				text = serifs.reversi.youSurrendered(this.userName);
-			}
-		} else if (msg.winnerId) {
-			if (msg.winnerId == this.account.id) {
-				if (this.isSettai) {
-					text = serifs.reversi.iWonButSettai(this.userName);
-				} else {
+			if (msg.winnerId) {
+				if (msg.winnerId == this.account.id) {
 					text = serifs.reversi.iWon(this.userName);
-				}
-			} else {
-				if (this.isSettai) {
-					text = serifs.reversi.iLoseButSettai(this.userName);
 				} else {
 					text = serifs.reversi.iLose(this.userName);
 				}
-			}
-		} else {
-			if (this.isSettai) {
-				text = serifs.reversi.drawnSettai(this.userName);
 			} else {
 				text = serifs.reversi.drawn(this.userName);
 			}
-		}
 
-		await this.post(text, this.startedNote);
+			await this.post(text, this.startedNoteId);
+		}
 
 		process.exit();
 	}
@@ -411,7 +394,7 @@ class Session {
 
 		setTimeout(() => {
 			const id = Math.random().toString(36).slice(2);
-			process.send!({
+			this.ipcSend({
 				type: 'putStone',
 				pos,
 				id
@@ -428,42 +411,25 @@ class Session {
 	 * 対局が始まったことをMisskeyに投稿します
 	 */
 	private postGameStarted = async () => {
-		const text = this.isSettai
-			? serifs.reversi.startedSettai(this.userName)
-			: serifs.reversi.started(this.userName, this.strength.toString());
+		return await this.post(`${serifs.reversi.started(this.userName, this.strength.toString()) }\n→[観戦する](${this.url})`);
+	}
 
-		return await this.post(`${text}\n→[観戦する](${this.url})`);
+	private ipcSend = (body: IPCTypes['child']) => {
+		process.send!(body);
 	}
 
 	/**
 	 * Misskeyに投稿します
 	 * @param text 投稿内容
 	 */
-	private post = async (text: string, renote?: any) => {
-		if (this.allowPost) {
-			const body = {
-				i: config.i,
-				text: text,
-				visibility: 'home'
-			} as any;
-
-			if (renote) {
-				body.renoteId = renote.id;
-			}
-
-			try {
-				const res = await got.post(`${config.host}/api/notes/create`, {
-					json: body
-				}).json();
-
-				return res.createdNote;
-			} catch (e) {
-				console.error(e);
-				return null;
-			}
-		} else {
-			return null;
-		}
+	private post = async (text: string, renoteId?: Misskey.entities.Note['id'], throwNoteId?: boolean) => {
+		if (!this.allowPost) return;
+		this.ipcSend({
+			type: 'postNote',
+			text,
+			renoteId,
+			throwNoteId
+		});
 	}
 }
 
