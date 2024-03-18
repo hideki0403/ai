@@ -1,7 +1,7 @@
 import { bindThis } from '@/decorators.js';
 import cron from 'node-cron'
 import dayjs from 'dayjs'
-import 'dayjs/locale/ja'
+import 'dayjs/locale/ja.js'
 import isLeapYear from 'dayjs/plugin/isLeapYear.js'
 import Module from '@/module.js'
 import serifs from '@/serifs.js'

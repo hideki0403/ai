@@ -54,12 +54,14 @@ export default class extends Module {
 	/**
 	 * リバーシストリーム
 	 */
+	// @ts-expect-error ライブラリ側に型定義がない
 	private reversiConnection?: Misskey.ChannelConnection<Misskey.Channels['reversi']>;
 
 	@bindThis
 	public install() {
 		if (!config.reversiEnabled) return {};
 
+		// @ts-expect-error ライブラリ側に型定義がない
 		this.reversiConnection = this.aira.stream.useChannel('reversi');
 
 		// 招待されたとき

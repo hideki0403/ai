@@ -1,5 +1,5 @@
 // AiraOS bootstrapper
-import pico from 'picocolors'
+import chalk from 'chalk'
 
 import Aira from '@/aira.js'
 import config from '@/config.js'
@@ -31,7 +31,7 @@ import NotingModule from '@/modules/noting/index.js'
 import PollModule from '@/modules/poll/index.js'
 import ReminderModule from '@/modules/reminder/index.js'
 
-console.log(pico.green(`
+console.log(chalk.green(`
  _____ _            _____ _____ 
 |  _  |_|___ ___   |     |   __|
 |     | |  _| .'|  |  |  |__   |
@@ -42,7 +42,7 @@ function log(msg: string): void {
 	_log(`[Boot]: ${msg}`)
 }
 
-log(pico.bold(`Aira v${config.version}`))
+log(chalk.bold(`Aira v${config.version}`))
 log('Starting AiraOS...')
 
 // あいらを起動
