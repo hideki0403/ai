@@ -184,7 +184,7 @@ export default {
 		/**
 		 * 対局開始
 		 */
-		started: (name: mixedString, strength: mixedString) => `${name}さんと対局を始めたよ！ (強さ${strength})`,
+		started: (name: mixedString, strength: mixedString) => `${name}と対局を始めたよ！ (強さ${strength})`,
 
 		/**
 		 * 勝ったとき
