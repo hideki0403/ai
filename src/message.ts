@@ -83,13 +83,20 @@ export default class Message {
 			await sleep(2000);
 		}
 
-		return await this.aira.post({
+		const postData = {
 			replyId: this.note.id,
 			text: text,
 			fileIds: opts?.file ? [opts?.file.id] : undefined,
 			cw: opts?.cw,
 			renoteId: opts?.renote
-		});
+		};
+
+		// DM以外は普通に返信し、DMの場合はDMで返信する
+		if (this.note.visibility != 'specified') {
+			return await this.aira.post(postData);
+		} else {
+			return await this.aira.sendMessage(this.userId, postData);
+		}
 	}
 
 	@bindThis

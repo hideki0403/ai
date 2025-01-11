@@ -303,8 +303,8 @@ export default {
 	 * 新規絵文字通知
 	 */
 	newEmojiDetector: {
-		notify: (emoji: string) => `新しい絵文字が追加されたみたい！\n$[x2 :${emoji}:] (\`:${emoji}:\`)`,
-		bulkNotify: (emojis: string[]) => `新しい絵文字が追加されたみたい！\n\n${emojis.map(emoji => `$[x2 :${emoji}:] (\`:${emoji}:\`)`).join('\n')}`
+		notifyMessage: '新しい絵文字が追加されたみたい！',
+		emojiTemplate: (emoji: string) => `$[x2 :${emoji}:] (\`:${emoji}:\`)`,
 	},
 
 	/**
