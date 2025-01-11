@@ -21,6 +21,7 @@ export default class extends Module {
 
 	@bindThis
 	private async onNote(note: Misskey.entities.Note) {
+		if (note.userId === this.aira.account.id) return; // あいら自身の投稿にはリアクションしない
 		if (note.reply != null) return;
 		if (note.text == null) return;
 		if (note.text.includes('@')) return; // (自分または他人問わず)メンションっぽかったらreject
