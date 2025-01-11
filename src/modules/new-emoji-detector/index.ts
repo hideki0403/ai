@@ -30,7 +30,7 @@ export default class extends Module {
 			this.bulkNotifyCooldownTimer = setTimeout(this.bulkNotify, 1000 * 60 * 3)
 		} else {
 			await this.aira.post({
-				text: serifs.newEmojiDetector.notify(emoji.name),
+				text: `${serifs.newEmojiDetector.notifyMessage}\n${serifs.newEmojiDetector.emojiTemplate(emoji.name)}`,
 			})
 		}
 	}
@@ -38,9 +38,25 @@ export default class extends Module {
 	@bindThis
 	private async bulkNotify() {
 		this.bulkNotifyCooldownTimer = null
-		await this.aira.post({
-			text: serifs.newEmojiDetector.bulkNotify(this.bulkNotifyEmojis),
-		})
+
+		let text = ''
+		let beforeNoteId: Misskey.entities.Note['id'] | null = null
+
+		for (let i = 0; i < this.bulkNotifyEmojis.length; i++) {
+			if (text.length !== 0) text += '\n'
+			text += serifs.newEmojiDetector.emojiTemplate(this.bulkNotifyEmojis[i])
+
+			if (i === this.bulkNotifyEmojis.length - 1 || text.length > 2000) {
+				const note = await this.aira.post({
+					text: beforeNoteId == null ? `${serifs.newEmojiDetector.notifyMessage}\n\n${text}` : text,
+					replyId: beforeNoteId,
+				})
+
+				beforeNoteId = note.id
+				text = ''
+			}
+		}
+
 		this.bulkNotifyEmojis = []
 	}
 }
