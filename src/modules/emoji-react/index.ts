@@ -9,7 +9,7 @@ import { sleep } from '@/utils/sleep.js';
 export default class extends Module {
 	public readonly name = 'emoji-react'
 
-	private htl!: Misskey.ChannelConnection
+	private htl!: Misskey.ChannelConnection<Misskey.Channels['homeTimeline']>
 
 	@bindThis
 	public install() {
